@@ -85,9 +85,11 @@ def main():
         print("title lines:", " | ".join(head))
         years = sorted(set(re.findall(r"\b20[2-3][0-9]\b", text[:6000])))
         print("years mentioned near start:", years)
-        for pat in [r"[^.\n]*\b25 preguntas[^.\n]*", r"[^.\n]*\b45 minutos[^.\n]*", r"[^.\n]*\b15 respuestas[^.\n]*", r"[^.\n]*preguntas de respuesta[^.\n]*", r"[^.\n]*verdadero o falso[^.\n]*"]:
-            for m in re.findall(pat, text, flags=re.I)[:3]:
-                print("format:", " ".join(m.split())[:220])
+        flat = " ".join(text.split())
+        for kw in ["minutos", "aprobar", "correctas", "veinticinco", "25 preguntas", "tres opciones", "verdadero", "tareas", "calificación", "APTO"]:
+            for m in re.finditer(re.escape(kw), flat, flags=re.I):
+                print("format[%s]: ...%s..." % (kw, flat[max(0, m.start() - 160): m.end() + 160]))
+                break
         # questions: lines like "1001 ¿..." or "1. ..." ; detect numbered question ids
         ids = re.findall(r"(?m)^\s*(\d{4})\s", text)
         print("4-digit question ids found:", len(ids), "unique:", len(set(ids)))
@@ -110,6 +112,7 @@ def main():
             terms = terms[:6]
             missing = [t for t in terms if t.lower() not in corpus]
             rows.append((qid, terms, missing))
+        return
         print("\nKEY-FACT COVERAGE (question id: key terms | not yet in app content)")
         for qid, terms, missing in sorted(set((r[0], tuple(r[1]), tuple(r[2])) for r in rows)):
             print("%s: %s | MISSING: %s" % (qid, ", ".join(terms), ", ".join(missing) if missing else "-"))

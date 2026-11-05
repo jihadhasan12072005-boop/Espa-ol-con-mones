@@ -298,5 +298,185 @@
    1280,
    688
   ]
+ },
+ "senado": {
+  "file": "senado.jpg",
+  "title": "File:Senado-Madrid Fachada (día puertas abiertas).JPG",
+  "artist": "Basilio",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Senado-Madrid_Fachada_(d%C3%ADa_puertas_abiertas).JPG",
+  "size": [
+   1280,
+   960
+  ]
+ },
+ "moncloa": {
+  "file": "moncloa.jpg",
+  "title": "File:Palacio de la Moncloa, Madrid, España edited.jpg",
+  "artist": "Yeray Díaz Zbida from Melilla, España",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Palacio_de_la_Moncloa,_Madrid,_Espa%C3%B1a_edited.jpg",
+  "size": [
+   1280,
+   830
+  ]
+ },
+ "prado": {
+  "file": "prado.jpg",
+  "title": "File:Museo del Prado 00 Fachada 1c.jpg",
+  "artist": "Oilisab",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Museo_del_Prado_00_Fachada_1c.jpg",
+  "size": [
+   1280,
+   960
+  ]
+ },
+ "teide": {
+  "file": "teide.jpg",
+  "title": "File:Teide Canadas.jpg",
+  "artist": "Ingo Mehling",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Teide_Canadas.jpg",
+  "size": [
+   1280,
+   553
+  ]
+ },
+ "donana": {
+  "file": "donana.jpg",
+  "title": "File:Paisaje en el Parque de Doñana, España, 2015-12-07, DD 18.JPG",
+  "artist": "Diego Delso",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Paisaje_en_el_Parque_de_Do%C3%B1ana,_Espa%C3%B1a,_2015-12-07,_DD_18.JPG",
+  "size": [
+   1280,
+   658
+  ]
+ },
+ "altamira": {
+  "file": "altamira.jpg",
+  "title": "File:Cueva de Altamira (Santillana del Mar-Cantabria) - Bisonte.jpg",
+  "artist": "JnCrlsMG",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Cueva_de_Altamira_(Santillana_del_Mar-Cantabria)_-_Bisonte.jpg",
+  "size": [
+   1280,
+   925
+  ]
+ },
+ "escorial": {
+  "file": "escorial.jpg",
+  "title": "File:Monasterio de El Escorial en Madrid.jpg",
+  "artist": "Zvonimir Stamenov",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Monasterio_de_El_Escorial_en_Madrid.jpg",
+  "size": [
+   1280,
+   853
+  ]
+ },
+ "fallas": {
+  "file": "fallas.jpg",
+  "title": "File:Fallas 2023, Falla de l'Ajuntament 01.jpg",
+  "artist": "Simon Burchell",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Fallas_2023,_Falla_de_l%27Ajuntament_01.jpg",
+  "size": [
+   1280,
+   960
+  ]
+ },
+ "flamenco": {
+  "file": "flamenco.jpg",
+  "title": "File:La noche larga de los Museos.jpg",
+  "artist": "Antonio Foncubierta",
+  "license": "CC BY-SA 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:La_noche_larga_de_los_Museos.jpg",
+  "size": [
+   1280,
+   960
+  ]
+ },
+ "merida": {
+  "file": "merida.jpg",
+  "title": "File:Teatro romano de Mérida. España-2.jpg",
+  "artist": "Lmbuga (Luis Miguel Bugallo Sánchez)",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Teatro_romano_de_M%C3%A9rida._Espa%C3%B1a-2.jpg",
+  "size": [
+   1280,
+   729
+  ]
+ },
+ "sagrada": {
+  "file": "sagrada.jpg",
+  "title": "File:Sagrada Familia 8-12-21 (6).jpg",
+  "artist": "Canaan",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Sagrada_Familia_8-12-21_(6).jpg",
+  "size": [
+   1280,
+   960
+  ]
+ },
+ "mapa_ccaa": {
+  "file": "mapa_ccaa.jpg",
+  "title": "File:Autonomous communities of Spain no names-gl.svg",
+  "artist": "MAGHOI",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Autonomous_communities_of_Spain_no_names-gl.svg",
+  "size": [
+   1280,
+   1176
+  ]
+ },
+ "mapa_rios": {
+  "file": "mapa_rios.jpg",
+  "title": "File:Pyrenees topographic map-fr.svg",
+  "artist": "Eric Gaba (Sting - fr:Sting)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:Pyrenees_topographic_map-fr.svg",
+  "size": [
+   1280,
+   760
+  ]
+ },
+ "escudo": {
+  "file": "escudo.jpg",
+  "title": "File:Escudo de España.svg",
+  "artist": "Coat extracted from the flag contributed to Sodipodi's Clipart Gallery by Pedro A. Gracia Fajardo. Modified by byj to se",
+  "license": "CC0",
+  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Escudo_de_Espa%C3%B1a.svg",
+  "size": [
+   1280,
+   1280
+  ]
+ },
+ "santiago": {
+  "file": "santiago.jpg",
+  "title": "File:2026. Escudos da Fachada do Obradoiro. Santiago de Compostela. Galiza.jpg",
+  "artist": "Luis Miguel Bugallo Sánchez",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:2026._Escudos_da_Fachada_do_Obradoiro._Santiago_de_Compostela._Galiza.jpg",
+  "size": [
+   1280,
+   806
+  ]
  }
 }
