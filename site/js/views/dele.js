@@ -158,7 +158,7 @@
     U.each(S.oral, function (T, i) {
       h += '<div class="card"><span class="eyebrow">Tarea ' + T.tarea + '</span><h3>' + esc(T.title) + '</h3><div class="row"><div class="c2">' +
         (T.photo ? '<div class="adv-scene mb16"><div class="ph" style="height:220px;' + ui.photoStyle(T.photo) + '"></div></div>' : '') +
-        '<p class="es" lang="es" dir="ltr" style="display:block">' + esc(T.task) + '</p><ul>' + U.map(T.prompts, function (p) { return '<li class="es-inline" lang="es" dir="ltr" style="display:list-item">' + esc(p) + '</li>'; }).join('') + '</ul>' +
+        '<p class="es" lang="es" dir="ltr" style="display:block">' + esc(T.task) + '</p><ul dir="ltr" lang="es" style="text-align:left;padding-left:22px">' + U.map(T.prompts, function (p) { return '<li class="es-inline">' + esc(p) + '</li>'; }).join('') + '</ul>' +
         (T.questions ? '<div class="btns">' + U.map(T.questions, function (q) { return U.say(q, 'سؤال الممتحِن'); }).join(' ') + '</div>' : '') + '</div>' +
         '<div class="c2"><div data-rec="' + i + '"></div><button class="btn ghost mt8" data-omodel="' + i + '">نموذج إجابة</button><div data-oout="' + i + '"></div></div></div></div>';
     });
