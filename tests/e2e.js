@@ -10,7 +10,7 @@ const ROUTES = ['/', '/learn', '/learn/A1', '/learn/A1/a1-01', '/learn/A2/a2-01'
   '/dele', '/dele/part/lectura', '/dele/part/oral', '/dele/sim/A', '/dele/sim/A/lectura', '/dele/sim/B/auditiva', '/dele/sim/A/escrita', '/dele/sim/B/oral',
   '/ccse', '/ccse/topic/t1-const', '/ccse/topic/t3-territorio', '/ccse/sim', '/ccse/sim/7', '/ccse/analysis',
   '/exams', '/exams/level/A1', '/exams/level/B2/50', '/exams/mixed', '/exams/mixed/3', '/exams/ccse', '/exams/ccse/12',
-  '/ciudadania', '/cultura', '/cultura/c1-01', '/cultura/c3-01', '/cultura/c5-03', '/banco', '/banco/leccion/c1-02', '/banco/dificiles', '/banco/oficial', '/cobertura', '/verbos',
+  '/ciudadania', '/cultura', '/cultura/c1-01', '/cultura/c3-01', '/cultura/c5-03', '/banco', '/banco/leccion/c1-02', '/banco/dificiles', '/banco/oficial', '/cobertura', '/verbos', '/verbos/v/tener', '/verbos/v/levantarse/imperativo', '/verbos/v/hacer/todo', '/verbos/v/empadronarse/subjPresente', '/verbos/tiempos', '/verbos/tiempo/subjFuturo', '/verbos/practica', '/verbos/practica/opciones', '/verbos/practica/escribir?t=indefinido', '/verbos/practica/completar', '/verbos/practica/irregulares', '/verbos/practica/examen', '/verbos/practica/errores', '/verbos/comparar', '/verbos/comparar/indicativo-subjuntivo', '/verbos/v/tener/practicar',
   '/speak', '/speak/c/medico', '/speak/p/r-rr', '/adventures', '/adventures/cafe', '/adventures/tienda', '/mistakes', '/mistakes/review', '/progress', '/does-not-exist'];
 
 const results = [];
@@ -170,11 +170,38 @@ function bad(name, detail) { results.push(['FAIL', name, detail || '']); console
     await ctx.close();
   }
 
+  // 9. verb laboratory: Arabic search, favourite persists, wrong typed answer goes to adaptive review, old #/lab link redirects
+  {
+    const { ctx, p } = await page();
+    await p.goto(base + '#/verbos'); await p.waitForTimeout(300);
+    await p.fill('#vq', 'يأكل'); await p.waitForTimeout(400);
+    const found = await p.evaluate(() => document.getElementById('vres').innerText);
+    (/comer/.test(found) ? ok : bad)('verb search in Arabic finds the Spanish verb', found.slice(0, 60).replace(/\n/g, ' '));
+    await p.goto(base + '#/verbos/v/conocer'); await p.waitForTimeout(250);
+    await p.click('#vfav'); await p.waitForTimeout(200);
+    await p.reload(); await p.waitForTimeout(400);
+    const fav = await p.evaluate(() => JSON.parse(localStorage.getItem('ecm.v1')).verbs.fav);
+    (fav.indexOf('conocer') >= 0 ? ok : bad)('verb favourite saved and survives reload', JSON.stringify(fav));
+    const t = await p.evaluate(() => { const r = document.querySelectorAll('.vt td.f'); return r.length + ':' + r[0].innerText; });
+    (/^6:conozco/.test(t) ? ok : bad)('verb page shows verified table (conozco)', t);
+    await p.goto(base + '#/verbos/practica/escribir?t=indefinido&lvl=A1'); await p.waitForTimeout(300);
+    await p.fill('#qType', 'zzz'); await p.click('[data-act="check"]'); await p.waitForTimeout(200);
+    const stats = await p.evaluate(() => { const s = JSON.parse(localStorage.getItem('ecm.v1')).verbs.stats; return Object.keys(s).length; });
+    (stats > 0 ? ok : bad)('wrong verb answer recorded for adaptive review', 'keys ' + stats);
+    await p.goto(base + '#/verbos/practica/errores'); await p.waitForTimeout(300);
+    const has = await p.evaluate(() => !!document.getElementById('qType'));
+    (has ? ok : bad)('adaptive mode replays the mistaken form');
+    await p.goto(base + '#/lab/tener'); await p.waitForTimeout(300);
+    (/#\/verbos\/v\/tener/.test(p.url()) ? ok : bad)('old #/lab link redirects to the verb laboratory', p.url().split('#')[1]);
+    if (p.errors.length) bad('verb lab JS errors', p.errors.join(' | '));
+    await ctx.close();
+  }
+
   // 8. mobile layout (iPhone-sized) – no horizontal scroll
   {
     const { ctx, p } = await page({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
     let overflow = [];
-    for (const r of ['/', '/learn/A2/a2-01', '/exams/level/A2/1', '/ccse', '/adventures/cafe', '/progress', '/lab/tener']) {
+    for (const r of ['/', '/learn/A2/a2-01', '/exams/level/A2/1', '/ccse', '/adventures/cafe', '/progress', '/verbos', '/verbos/v/tener', '/verbos/v/levantarse/todo', '/verbos/tiempo/presente', '/verbos/comparar/ser-estar']) {
       await p.goto(base + '#' + r); await p.waitForTimeout(250);
       const w = await p.evaluate(() => document.documentElement.scrollWidth);
       if (w > 392) overflow.push(r + ':' + w);

@@ -1,7 +1,9 @@
 /* Unit tests for the conjugation engine: node tests/conjugate.test.js */
 var vm = require('vm'), fs = require('fs'), path = require('path');
+// MODE=rules tests the rule engine alone; default tests the app setup (dataset + engine)
 var ctx = { window: {} }; ctx.window.window = ctx.window;
-vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../site/js/core/conjugate.js'), 'utf8'), ctx);
+var files = process.env.MODE === 'rules' ? ['core/conjugate.js'] : ['data/verbs-db.js', 'core/conjugate.js', 'core/verbs.js'];
+files.forEach(function (f) { vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../site/js/', f), 'utf8'), ctx); });
 var C = ctx.window.ECM.conj, fails = 0, n = 0;
 function eq(v, t, exp) {
   n++;

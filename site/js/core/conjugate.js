@@ -311,7 +311,7 @@
     return [null, tu, sub[2], nos, vos, sub[5]];
   }
   function imperativoNeg(inf) {
-    var s = subjuntivo(inf);
+    var s = derived(inf, subjuntivo) || subjuntivo(inf);
     return [null, 'no ' + s[1], 'no ' + s[2], 'no ' + s[3], 'no ' + s[4], 'no ' + s[5]];
   }
 
@@ -338,9 +338,27 @@
     imperativo: imperativo, imperativoNeg: imperativoNeg
   };
 
+  /* Verbs in the verified dataset (ECM.verbs, 730+ verbs) are conjugated from it; this rule engine is the
+   * fallback for any other verb typed by the learner. */
+  var MAPT = { presente: 'presente', indefinido: 'indefinido', imperfecto: 'imperfecto', perfecto: 'perfecto', pluscuamperfecto: 'pluscuamperfecto',
+    futuro: 'futuro', condicional: 'condicional', subjuntivo: 'subjPresente', subjImperfecto: 'subjImperfectoRa', imperativo: 'imperativo', imperativoNeg: 'imperativoNeg' };
+  function fromDataset(inf, tense) {
+    var V = ECM.verbs;
+    if (!V || !V.known(inf)) return null;
+    if (tense === 'participio') return V.nonFinite(inf.replace(/se$/, '')).participio;
+    if (tense === 'gerundio') return V.nonFinite(inf).gerundio;
+    if (!MAPT[tense]) return null;
+    var f = V.forms(inf, MAPT[tense]);
+    if (!f) return null;
+    for (var i = 0; i < f.length; i++) if (f[i] === undefined) f[i] = null;
+    return f;
+  }
+
   function conjugate(inf, tense) {
     inf = String(inf).toLowerCase();
     if (inf === 'oir') inf = 'oír';
+    var ds = fromDataset(inf, tense);
+    if (ds) return ds;
     var reflexive = false;
     if (/se$/.test(inf) && inf.length > 4 && (VERBS[inf.slice(0, -2)] || /(ar|er|ir|ír)se$/.test(inf))) {
       reflexive = true; inf = inf.slice(0, -2);
@@ -357,7 +375,7 @@
     } else {
       var f = FN[tense];
       if (!f) throw new Error('Unknown tense ' + tense);
-      forms = derived(inf, f) || f(inf);
+      forms = tense === 'imperativoNeg' ? f(inf) : (derived(inf, f) || f(inf));
     }
     if (reflexive && tense !== 'imperativo' && tense !== 'imperativoNeg') {
       var pr = ['me', 'te', 'se', 'nos', 'os', 'se'];
@@ -411,6 +429,6 @@
     stripAccents: stripAccents, isKnown: function (v) { return !!VERBS[v]; },
     meaning: function (v) { return VERBS[v] ? VERBS[v][0] : ''; },
     stemChange: function (v) { return VERBS[v] ? (VERBS[v][1] || '') : ''; },
-    isIrregular: function (v) { return !!IRR[v]; }
+    isIrregular: function (v) { if (ECM.verbs && ECM.verbs.known(v)) { var c = ECM.verbs.classify(v); return c === 'i'; } return !!IRR[v]; }
   };
 })(typeof window !== 'undefined' ? window : this);

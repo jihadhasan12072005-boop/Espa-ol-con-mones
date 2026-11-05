@@ -133,7 +133,7 @@
     { id: 'B2', t: 'نماذج B2', d: 'الشرط بأنواعه، توافق الأزمنة، الاستدراك، المبني للمجهول.', photo: 'toledo' },
     { id: 'mixed', t: 'نماذج مختلطة A1–B2', d: 'أسئلة متدرّجة من A1 إلى B2 في امتحان واحد.', photo: 'salamanca' },
   ];
-  X.isLang = function (e) { return e.kind === 'level' || e.kind === 'mixed' || e.kind === 'dele' || e.kind === 'dele-self' || e.kind === 'vocab'; };
+  X.isLang = function (e) { return e.kind === 'level' || e.kind === 'mixed' || e.kind === 'dele' || e.kind === 'dele-self' || e.kind === 'vocab' || e.kind === 'verbs'; };
 
   function history(kind, ref) {
     var m = {};

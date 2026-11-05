@@ -108,7 +108,7 @@
       h += '<div class="row"><div class="c23">' + U.map(ls, function (l, i) {
         var r = ECM.store.state.lessons[l.id];
         return row('#/learn/' + lv + '/' + l.id, i + 1, l.ta, l.t, !!(r && r.done), r && r.done ? ('نتيجة التطبيق: ' + r.score + '%') : '');
-      }).join('') + '</div><div class="c3"><div class="card gold"><h3>نصيحة الأستاذ</h3><p>ادرس كل درس على مرحلتين: اقرأ الشرح والأمثلة بصوت عالٍ، ثم عد في يوم آخر لحلّ التطبيق. التكرار المتباعد يثبّت القاعدة.</p><a class="btn ghost sm" href="#/lab">افتح مختبر القواعد</a></div></div></div>';
+      }).join('') + '</div><div class="c3"><div class="card gold"><h3>نصيحة الأستاذ</h3><p>ادرس كل درس على مرحلتين: اقرأ الشرح والأمثلة بصوت عالٍ، ثم عد في يوم آخر لحلّ التطبيق. التكرار المتباعد يثبّت القاعدة.</p><a class="btn ghost sm" href="#/verbos">افتح مختبر الأفعال</a></div></div></div>';
     }
     el.innerHTML = h;
   }
@@ -163,7 +163,7 @@
     var toc = '<div class="card" style="position:-webkit-sticky;position:sticky;top:76px"><span class="eyebrow">محتوى الدرس</span><ul class="list small">' +
       U.map(sec, function (s) { return '<li style="padding:6px 0"><a href="javascript:void(0)" data-scroll="s-' + s.k + '" style="text-decoration:none;color:#0E2240">' + s.t + '</a></li>'; }).join('') + '</ul>' +
       '<div class="mt16">' + (prev ? '<a class="btn ghost sm" href="#/learn/' + l.lv + '/' + prev.id + '">→ السابق</a> ' : '') + (nxt ? '<a class="btn ghost sm" href="#/learn/' + l.lv + '/' + nxt.id + '">التالي ←</a>' : '') + '</div>' +
-      '<div class="mt16"><a class="btn sm navy" href="#/lab">مختبر التصريف</a></div></div>';
+      '<div class="mt16"><a class="btn sm navy" href="#/verbos">مختبر الأفعال</a></div></div>';
 
     el.innerHTML = '<div class="card navy"><span class="eyebrow">' + l.lv + ' · الدرس ' + (idx + 1) + ' من ' + ls.length + '</span>' +
       '<h1 style="color:#fff;margin-bottom:4px">' + esc(l.ta) + '</h1><div class="display-es es" lang="es" style="font-size:20px;color:#E9C987">' + esc(l.t) + '</div>' +

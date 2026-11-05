@@ -156,7 +156,7 @@
       if (a === undefined || a === null || a === '') return false;
       if (q.type === 'type') {
         var accepted = [].concat(q.answer, q.alt || []);
-        for (var i = 0; i < accepted.length; i++) if (U.norm(a) === U.norm(accepted[i])) return true;
+        for (var i = 0; i < accepted.length; i++) if (U.norm(a, q.strict) === U.norm(accepted[i], q.strict)) return true;
         return false;
       }
       return Number(a) === Number(q.answer);
