@@ -154,7 +154,7 @@
     body += S('tables', '٥. جداول التصريف والمقارنة', model + (conj ? '<p class="small muted mt16">الصيغ <span style="color:#B4423A;font-weight:700">بالأحمر</span> شاذة (تختلف عن النمط المنتظم). اضغط ▶ للاستماع.</p><div class="conj-grid">' + conj + '</div>' : '') + other +
       (!model && !conj && !other ? '<p class="muted">هذا الدرس لا يحتاج جدول تصريف؛ انظر الأمثلة والمقارنة أدناه.</p>' : ''));
     var regBody = X.reg ? '<div class="rule">' + br(X.reg) + '</div>' : '';
-    if (VL && lessonVerbs.length) regBody += '<p class="mt8">أفعال هذا الدرس في مختبر الأفعال:</p><div class="flex wrap" style="gap:6px">' + U.map(lessonVerbs, function (x) {
+    if (VL && lessonVerbs.length) regBody += '<p class="mt8">أفعال هذا الدرس في مختبر الأفعال:</p><div class="flex wrap gapx">' + U.map(lessonVerbs, function (x) {
       var pz = x.split('|'), c = VB.known(pz[0]) ? VB.classify(pz[0]) : null;
       return '<a class="vocab-chip" href="#/verbos/v/' + esc(pz[0]) + '/' + pz[1] + '"><b lang="es">' + esc(pz[0]) + '</b> ' + (c ? VL.clsTag(c) : '') + '</a>';
     }).join('') + '</div>';

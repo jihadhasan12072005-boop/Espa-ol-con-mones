@@ -19,7 +19,7 @@ var BANNED = [
   [/=>/, 'arrow function'], [/`/, 'template literal'], [/\blet\s/, 'let'], [/\bconst\s/, 'const'], [/\bclass\s+[A-Z]/, 'class'],
   [/\.includes\(/, 'Array/String.includes'], [/\.startsWith\(/, 'startsWith'], [/\.endsWith\(/, 'endsWith'], [/Array\.from/, 'Array.from'],
   [/\bfetch\(/, 'fetch'], [/new Promise|Promise\./, 'Promise'], [/\.padStart|\.padEnd/, 'padStart/End'], [/\(\?<[=!]/, 'regex lookbehind'],
-  [/\.flat\(|\.flatMap\(/, 'flat'], [/Object\.(values|entries)\(/, 'Object.values/entries'], [/\?\.|\?\?/, 'optional chaining / nullish'],
+  [/\.flat\(|\.flatMap\(/, 'flat'], [/Object\.(values|entries)\(/, 'Object.values/entries'], [/\?\.|\?\?/, 'optional chaining / nullish'], [/style=\\?"[^"]*\bgap\s*:/, 'inline flex gap (Safari < 14.1)'],
   [/\.forEach\(/, 'NodeList.forEach risk (use U.each)'], [/\.closest\(/, null]
 ];
 scripts.forEach(function (s) {

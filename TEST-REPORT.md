@@ -41,7 +41,12 @@ Date: 5 November 2026. Environment: Linux cloud container, Node 22, Chromium (Pl
 - A “Verify the live site” job was added after this report: it fetches the live page, assets and a nested path from GitHub’s runner on every deploy. Check its result in the Actions tab.
 
 ## Not performed / limitations (honest)
-- **Real Safari on an old Mac**: not available here. Mitigations: ES5-only code verified by parser, legacy-API simulation, conservative CSS. **Please open the link on the MacBook and tell me what you see**, including the macOS/Safari version (Apple menu → About This Mac; Safari → About Safari).
+- **Target browser confirmed: Safari 11** (2017; macOS 10.11–10.13). Not available here to test directly. What this means:
+  - JavaScript: all ES5, which is older than Safari 11 needs; legacy-API simulation passes.
+  - CSS: flex `gap` (Safari 14.1+) is banned in CSS **and in inline styles** by CI; spacing uses margins. Fonts have `.woff` fallbacks for older macOS.
+  - Microphone dictation (`webkitSpeechRecognition`) does **not** exist in Safari 11: the speaking studio shows the typing box with Arabic correction instead (tested with the API removed).
+  - Spoken Spanish (text-to-speech) **is** supported in Safari 11, using the Spanish voices installed on the Mac (Monica/Jorge).
+  - Please open the site on the MacBook and tell me if anything looks wrong.
 - **Real microphone / Apple Dictation**: cannot be tested in a headless container. The code uses feature detection, explicit start/stop, and auto-restart after pauses. Safari needs version 14.1+ and Dictation enabled. Older Safari shows the typing box instead.
 - **Spanish TTS voice quality**: depends on the voices installed on the Mac.
 - **Loading the live site from this sandbox**: blocked by the sandbox proxy, so it is verified through GitHub’s own deploy and verify jobs instead.

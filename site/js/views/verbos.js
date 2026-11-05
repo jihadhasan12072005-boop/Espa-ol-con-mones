@@ -84,7 +84,7 @@
     // search + filters
     h += ui.secTitle('ابحث في المكتبة', '<span class="small muted">بالإسبانية أو بالعربية</span>');
     h += '<div class="card"><div class="row"><div class="c2"><input class="inp" id="vq" placeholder="مثال: tener ، يأكل ، levantarse" autocomplete="off" autocapitalize="off" spellcheck="false"></div>' +
-      '<div class="c2"><div class="flex wrap" style="gap:8px">' +
+      '<div class="c2"><div class="flex wrap gapx">' +
       sel('vf-cls', [['', 'كل الأنواع'], ['i', 'الشاذّة'], ['o', 'تغيير إملائي/نبرة'], ['r', 'المنتظمة']]) +
       sel('vf-lvl', [['', 'كل المستويات'], ['A1', 'A1'], ['A2', 'A2'], ['B1', 'B1'], ['B2', 'B2'], ['DELE', 'مفيدة لـ DELE A2 (A1–A2)']]) +
       sel('vf-grp', [['', '-ar / -er / -ir'], ['ar', '-ar'], ['er', '-er'], ['ir', '-ir']]) +
@@ -138,7 +138,7 @@
       '<h1 class="es display-es" lang="es" dir="ltr" style="color:#fff;margin:4px 0">' + esc(inf) + ' ' + U.say(inf, '', 'light') + '</h1>' +
       '<div class="pron" lang="es" dir="ltr">' + pron(inf) + '</div>' +
       '<p style="font-size:20px;margin:8px 0 6px">' + esc(it.ar) + '</p>' +
-      '<div class="flex wrap" style="gap:6px">' + lvlTag(it.level) + clsTag(it.cls) + (it.level === 'A1' || it.level === 'A2' ? '<span class="tag">مفيد لـ DELE A2</span>' : '') +
+      '<div class="flex wrap gapx">' + lvlTag(it.level) + clsTag(it.cls) + (it.level === 'A1' || it.level === 'A2' ? '<span class="tag">مفيد لـ DELE A2</span>' : '') +
       U.map(it.cats, function (k) { return V.CATS[k] ? '<span class="tag light">' + esc(V.CATS[k]) + '</span>' : ''; }).join('') + (e.def ? '<span class="tag amber">يُستعمل بصيغة الغائب فقط</span>' : '') + '</div>' +
       '</div><div class="vh-side"><button class="btn ' + (isFav(lex) ? 'gold' : 'light') + '" id="vfav">' + (isFav(lex) ? '★ في المفضّلة' : '☆ أضف إلى المفضّلة') + '</button>' +
       '<a class="btn light mt8" href="#/verbos/v/' + esc(inf) + '/practicar">تدرّب على هذا الفعل</a>' +
@@ -212,7 +212,7 @@
     h += ui.secTitle('أمثلة (' + G.ex.length + ')') + '<div class="card"><ol class="ex-list">' + U.map(G.ex, function (x) {
       var pz = x.split('|'); return '<li><span class="es" lang="es" dir="ltr">' + exampleHtml(pz[0]) + '</span> ' + U.say(exampleText(pz[0]), '', 'sm') + '<br><span class="muted">' + esc(pz[1]) + '</span></li>';
     }).join('') + '</ol></div>';
-    h += '<div class="flex wrap mt16" style="gap:8px"><a class="btn gold" href="#/verbos/practica/escribir?t=' + k + '">تدرّب كتابةً على هذا الزمن</a><a class="btn" href="#/verbos/practica/opciones?t=' + k + '">اختيار من متعدد</a><a class="btn ghost" href="#/verbos/practica/completar?t=' + k + '">أكمل الجمل</a></div>';
+    h += '<div class="flex wrap mt16 gapx"><a class="btn gold" href="#/verbos/practica/escribir?t=' + k + '">تدرّب كتابةً على هذا الزمن</a><a class="btn" href="#/verbos/practica/opciones?t=' + k + '">اختيار من متعدد</a><a class="btn ghost" href="#/verbos/practica/completar?t=' + k + '">أكمل الجمل</a></div>';
     el.innerHTML = h;
   }
 
@@ -333,7 +333,7 @@
     U.each(ks, function (k) { right += stats[k].r || 0; wrong += stats[k].w || 0; if (stats[k].w > (stats[k].r || 0) - 1 && stats[k].w > 0 && !/\|s$/.test(k)) weak++; });
     var h = '<div class="card navy"><span class="eyebrow">PRÁCTICA</span><h1 style="color:#fff">تمارين الأفعال</h1><p>كل الأسئلة تُبنى من الجداول الموثّقة نفسها، فلا يوجد سؤال بإجابة مخترعة. أخطاؤك تُحفظ لتعود إليها في وضع «من أخطائي».</p>' +
       '<div class="row mt16"><div class="c4"><div class="stat-mini">' + right + '<small>إجابة صحيحة</small></div></div><div class="c4"><div class="stat-mini">' + wrong + '<small>إجابة خاطئة</small></div></div><div class="c4"><div class="stat-mini">' + weak + '<small>صيغة تحتاج مراجعة</small></div></div><div class="c4"><div class="stat-mini">' + st().fav.length + '<small>فعل في المفضّلة</small></div></div></div></div>';
-    h += '<div class="card mt16"><h3>الإعدادات</h3><div class="flex wrap" style="gap:8px">' +
+    h += '<div class="card mt16"><h3>الإعدادات</h3><div class="flex wrap gapx">' +
       sel('p-lvl', [['', 'A1–B1 (افتراضي)'], ['A1', 'A1 فقط'], ['A2', 'حتى A2'], ['B1', 'حتى B1'], ['B2', 'كل الأفعال حتى B2']]) +
       sel('p-t', [['', 'الأزمنة الأساسية'], ].concat(U.map(V.ORDER, function (k) { return [k, V.TENSES[k].es + ' — ' + V.TENSES[k].ar]; }))) +
       sel('p-src', [['', 'كل المكتبة'], ['fav', '★ المفضّلة فقط']]) + '</div></div>';
@@ -366,7 +366,7 @@
     h += ui.secTitle('أمثلة') + '<div class="row"><div class="c2"><div class="cmp-side a"><h3 lang="es">' + esc(c.a) + '</h3>' + exList(c, 'a') + '</div></div><div class="c2"><div class="cmp-side b"><h3 lang="es">' + esc(c.b) + '</h3>' + exList(c, 'b') + '</div></div></div>';
     h += '<div class="card warn mt16"><h3>أخطاء شائعة</h3><ul>' + U.map(c.mistakes, function (x) { return '<li>' + bidi(x) + '</li>'; }).join('') + '</ul></div>';
     var links = U.filter([c.a, c.b], function (v) { return V.known(v); });
-    if (links.length) h += '<div class="flex wrap mt8" style="gap:8px">' + U.map(links, function (v) { return '<a class="btn ghost sm" href="#/verbos/v/' + v + '">جدول تصريف ' + v + '</a>'; }).join('') + '</div>';
+    if (links.length) h += '<div class="flex wrap mt8 gapx">' + U.map(links, function (v) { return '<a class="btn ghost sm" href="#/verbos/v/' + v + '">جدول تصريف ' + v + '</a>'; }).join('') + '</div>';
     h += ui.secTitle('اختبر نفسك') + '<div id="cq"></div>';
     el.innerHTML = h;
     var qs = U.map(c.quiz, function (q, i) { return { id: 'vc-' + c.id + '-' + i, type: 'mc', stem: q[0], stemLang: 'es', noSay: true, opts: q[1], answer: q[2], optLang: 'es', why: rich(q[3]), topic: 'مقارنة: ' + c.a + ' / ' + c.b, src: 'مختبر المقارنة' }; });
