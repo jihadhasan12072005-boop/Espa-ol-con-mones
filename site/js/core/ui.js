@@ -134,6 +134,7 @@
     var c = { id: q.id, type: q.type, stem: q.stem, stemLang: q.stemLang, opts: q.opts, answer: q.answer, why: q.why, topic: q.topic, level: q.level, src: q.src, prompt: q.prompt };
     if (q.passage) c.passage = q.passage.length > 1200 ? q.passage.slice(0, 1200) + '…' : q.passage;
     if (q.audio) c.audio = q.audio;
+    if (q.audioLines) c.audio = U.map(q.audioLines, function (l) { return l[1]; }).join(' … ');
     if (q.alt) c.alt = q.alt;
     return c;
   }
@@ -190,7 +191,12 @@
       var h = '';
       if (q.prompt) h += '<p class="muted mb8">' + rich(q.prompt) + '</p>';
       if (q.passage) h += '<div class="reading-text mb16" lang="es">' + U.es(q.passage).replace(/\n/g, '<br>') + '</div>';
-      if (q.audio) {
+      if (q.audioLines) {
+        h += '<div class="card emerald tight mb16"><div class="flex wrap"><button type="button" class="btn sm" data-act="playlines">▶ استمع إلى التسجيل</button><button type="button" class="btn sm ghost" data-act="stopaudio" style="margin-right:8px">■ إيقاف</button>' +
+          '<span class="muted small" style="margin-right:10px">في الامتحان الحقيقي تستمع مرتين. النص يظهر بعد الإجابة.</span></div>' +
+          ((revealed[pos] || !ECM.tts.supported()) ? '<div class="mt8">' + U.map(q.audioLines, function (l) { return '<div><span class="speaker">' + esc(l[0]) + ':</span> <span class="es" lang="es" dir="ltr">' + esc(l[1]) + '</span></div>'; }).join('') + '</div>' : '') + '</div>';
+        if (!ECM.tts.supported()) h += '<div class="notice red mb8">متصفحك لا يدعم القراءة الصوتية؛ النص معروض للتدرّب قراءةً.</div>';
+      } else if (q.audio) {
         h += '<div class="card emerald tight mb16"><div class="flex wrap"><button type="button" class="btn sm" data-say="' + esc(q.audio) + '">▶ استمع إلى التسجيل</button>' +
           '<span class="muted small" style="margin-right:10px">يمكنك الاستماع أكثر من مرة. النص مخفي حتى تجيب.</span></div>' +
           (revealed[pos] ? '<div class="es mt8" lang="es" dir="ltr">' + esc(q.audio) + '</div>' : '') + '</div>';
@@ -351,6 +357,8 @@
       if (act === 'check') check();
       else if (act === 'skip') { answers[pos] = q.type === 'type' ? '' : -1; checked[pos] = true; revealed[pos] = true; if (opt.review) M.review(q.id, false); else M.record(q, 'لا أعرف'); render(); }
       else if (act === 'reveal') { revealed[pos] = true; render(); }
+      else if (act === 'playlines') { ECM.tts.speakLines(U.map(q.audioLines, function (l, i) { return { text: l[1], pitch: l[2] || (i % 2 ? 0.82 : 1.12) }; })); }
+      else if (act === 'stopaudio') { ECM.tts.stop(); }
       else if (act === 'next') { if (pos === n - 1 && mode === 'practice') finish(); else go(pos + 1); }
       else if (act === 'prev') go(pos - 1);
       else if (act === 'submit') {
@@ -396,7 +404,8 @@
       var d = wrong[j], q = d.q, ans = q.type === 'type' ? [].concat(q.answer)[0] : (q.type === 'tf' ? (q.answer === 0 ? 'Verdadero' : 'Falso') : q.opts[q.answer]);
       var given = d.given === undefined || d.given === '' || d.given === -1 ? '—' : (q.type === 'type' ? d.given : (q.type === 'tf' ? (Number(d.given) === 0 ? 'Verdadero' : 'Falso') : q.opts[d.given]));
       h += '<div class="mistake-pair">' +
-        (q.audio ? '<div class="small muted">نص التسجيل: <span class="es-inline" lang="es" dir="ltr">' + esc(q.audio) + '</span></div>' : '') +
+        (q.audioLines ? '<div class="small muted">نص التسجيل: <span class="es-inline" lang="es" dir="ltr">' + esc(U.map(q.audioLines, function (l) { return l[0] + ': ' + l[1]; }).join(' / ')) + '</span></div>' : '') +
+        (q.audio && !q.audioLines ? '<div class="small muted">نص التسجيل: <span class="es-inline" lang="es" dir="ltr">' + esc(q.audio) + '</span></div>' : '') +
         (q.stem ? (q.stemLang === 'ar' ? '<div><b>' + rich(q.stem) + '</b></div>' : '<div class="es" lang="es" dir="ltr"><b>' + U.es(q.stem) + '</b></div>') : '') +
         '<span class="wrong">' + esc(given) + '</span><span class="right">' + esc(ans) + '</span>' +
         (q.why ? '<div class="small mt8">' + rich(q.why) + '</div>' : '') + '</div>';

@@ -9,7 +9,7 @@ module.exports = function load() {
   win.window = win;
   var ctx = vm.createContext(win);
   srcs.forEach(function (s) {
-    if (/views\/|core\/app\.js/.test(s) && !/views\/(learn|exams|ccse)\.js/.test(s)) return;
+    if (/views\/|core\/app\.js/.test(s) && !/views\/(learn|exams|ccse|home)\.js/.test(s)) return;
     vm.runInContext(fs.readFileSync(path.join(__dirname, '../site', s), 'utf8'), ctx, { filename: s });
   });
   return win.ECM;
