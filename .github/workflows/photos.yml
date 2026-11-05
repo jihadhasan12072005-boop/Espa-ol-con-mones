@@ -4,10 +4,7 @@ name: Fetch photo candidates (maintenance)
 # photos of Spain from Wikimedia Commons so they can be reviewed and the
 # best ones committed into site/img/photos. Not needed for normal deploys.
 on:
-  workflow_dispatch:
-  push:
-    branches: ['claude/**']
-    paths: ['scripts/fetch_photo_candidates.py']
+  workflow_dispatch:   # run manually from the Actions tab if new photos are ever needed
 
 permissions:
   contents: write

@@ -6,10 +6,10 @@
   var ui = ECM.ui = {};
 
   /* ---------------- photos ---------------- */
-  ui.photoStyle = function (key) {
+  ui.photoStyle = function (key, thumb) {
     var p = (ECM.photos && ECM.photos[key]) || (ECM.photos && ECM.photos._default) || {};
     var layers = [];
-    if (p.file) layers.push('url(img/photos/' + p.file + ')');
+    if (p.file) layers.push('url(img/photos/' + (thumb ? 'thumb/' : '') + p.file + ')');
     if (p.fb) layers.push('url(img/fallback/' + p.fb + '.jpg)');
     return layers.length ? 'background-image:' + layers.join(',') + ';' : '';
   };

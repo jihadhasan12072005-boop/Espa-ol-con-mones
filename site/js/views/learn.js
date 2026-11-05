@@ -50,7 +50,7 @@
 
   function levelCard(L) {
     var p = course.progress(L.id), cur = ECM.store.state.profile.level === L.id;
-    return '<div class="c4"><a class="tile" href="#/learn/' + L.id + '"><div class="ph" style="' + ui.photoStyle(L.photo) + '"><span class="tag light">' + (cur ? 'مستواك الحالي' : L.es) + '</span></div>' +
+    return '<div class="c4"><a class="tile" href="#/learn/' + L.id + '"><div class="ph" style="' + ui.photoStyle(L.photo, true) + '"><span class="tag light">' + (cur ? 'مستواك الحالي' : L.es) + '</span></div>' +
       '<div class="body"><h3><span class="lvl">' + L.id + '</span> ' + L.name + '</h3><p>' + L.desc + '</p>' +
       '<div class="mt8">' + ui.bar(p.pct) + '</div><div class="meta">' + p.done + ' / ' + p.total + ' وحدة مكتملة</div></div></a></div>';
   }

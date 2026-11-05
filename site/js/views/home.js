@@ -101,7 +101,7 @@
     // sections
     h += ui.secTitle('أقسام الأكاديمية');
     h += '<div class="row">' + U.map(SECTIONS, function (x) {
-      return '<div class="c5"><a class="tile" href="#/' + x[0] + '"><div class="ph" style="height:118px;' + ui.photoStyle(x[1]) + '"></div><div class="body"><h3 style="font-size:17px">' + x[2] + '</h3><p class="small">' + x[3] + '</p></div></a></div>';
+      return '<div class="c5"><a class="tile" href="#/' + x[0] + '"><div class="ph" style="height:118px;' + ui.photoStyle(x[1], true) + '"></div><div class="body"><h3 style="font-size:17px">' + x[2] + '</h3><p class="small">' + x[3] + '</p></div></a></div>';
     }).join('') + '</div>';
 
     // achievements
