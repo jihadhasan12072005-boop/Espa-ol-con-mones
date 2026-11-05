@@ -386,3 +386,7 @@ label.lbl { display: block; font-weight: 700; margin-bottom: 6px; color: #0E2240
 .conj table { direction: ltr; }
 .conj td.p { width: auto; white-space: nowrap; }
 .brand b { font-size: 17px; white-space: nowrap; }
+.credit { position: absolute; left: 10px; top: 8px; font-size: 11px; line-height: 1.4; color: rgba(255,255,255,.85); background: rgba(10,25,48,.45); padding: 1px 7px; border-radius: 6px; direction: ltr; max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hero .credit { top: auto; bottom: 8px; background: none; }
+.adv-scene .ph .cap .tag { display: inline-block; }
+.adv-scene .ph .cap h2 { margin-top: 4px; }

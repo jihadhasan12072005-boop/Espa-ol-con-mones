@@ -148,7 +148,7 @@
   ui.quiz = function (el, questions, opt) {
     opt = opt || {};
     var mode = opt.mode || 'practice';
-    var Q = questions, n = Q.length, pos = 0, answers = new Array(n), checked = new Array(n);
+    var Q = U.map(questions, balance), n = Q.length, pos = 0, answers = new Array(n), checked = new Array(n);
     var started = Date.now(), timerId = null, finished = false, revealed = {};
 
     function isCorrect(q, a) {
@@ -372,6 +372,19 @@
     render();
     return { finish: finish, stop: function () { clearInterval(timerId); finished = true; } };
   };
+
+  /* Deterministic option shuffle per question id: the correct answer is spread
+   * evenly over a/b/c/d (authors tend to put it in the same place), yet a model
+   * shows the same order every time it is retaken.                              */
+  function balance(q) {
+    if (q.type !== 'mc' || !q.opts || q.fixedOrder || q.opts.length < 2) return q;
+    var idx = U.shuffle(U.map(q.opts, function (o, i) { return i; }), U.rng(U.hash(String(q.id || q.stem))));
+    var c = Object.assign({}, q);
+    c.opts = U.map(idx, function (i) { return q.opts[i]; });
+    c.answer = idx.indexOf(Number(q.answer));
+    return c;
+  }
+  ui.balance = balance;
 
   ui.report = function (r, opt) {
     opt = opt || {};

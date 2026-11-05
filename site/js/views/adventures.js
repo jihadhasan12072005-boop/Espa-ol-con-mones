@@ -40,8 +40,11 @@
         h += '<div class="bubble them"><span class="speaker" style="color:#E9C987">' + esc(step.s) + '</span><span class="es" lang="es" dir="ltr">' + esc(step.es) + '</span> ' + U.say(step.es, 'استمع') +
           (showAr ? '<div class="small muted mt8">' + esc(step.ar) + '</div>' : '') + '</div>';
         h += '<p class="small muted mt16">ماذا تقول؟ اختر الجملة الأنسب:</p>';
-        U.each(step.c, function (c, i) {
-          h += '<button class="choice" data-ch="' + i + '" lang="es">' + esc(c[0]) + (showAr && c[1] !== '—' ? '<span class="ar">' + esc(c[1]) + '</span>' : '') + '</button>';
+        // fixed shuffled order per step so the right answer is not always first;
+        // choice translations are not shown before answering (they would reveal the answer)
+        var order = U.shuffle(U.map(step.c, function (c, i) { return i; }), U.rng(U.hash(a.id + '-' + s.step)));
+        U.each(order, function (i) {
+          h += '<button class="choice" data-ch="' + i + '" lang="es">' + esc(step.c[i][0]) + '</button>';
         });
         h += '<div id="advFb"></div>';
       }
@@ -73,7 +76,7 @@
       U.each(U.$$('[data-ch]', el), function (b) { b.disabled = false; b.style.borderColor = ''; });
       if (c[2] === 1) {
         s.ok++;
-        fb.innerHTML = '<div class="fb ok"><b class="t">✓ إجابة مناسبة</b>' + rich(c[3]) + '</div><button class="btn" id="go">تابع ←</button>';
+        fb.innerHTML = '<div class="fb ok"><b class="t">✓ إجابة مناسبة</b>' + (c[1] && c[1] !== '—' ? '<div class="small muted">المعنى: ' + esc(c[1]) + '</div>' : '') + rich(c[3]) + '</div><button class="btn" id="go">تابع ←</button>';
         U.each(U.$$('[data-ch]', el), function (b) { b.disabled = true; });
         U.$('[data-ch="' + i + '"]', el).style.borderColor = '#0E7C5A';
         U.$('#go', el).onclick = function () { s.log.push({ i: s.step, c: i }); advance(c[4]); };
