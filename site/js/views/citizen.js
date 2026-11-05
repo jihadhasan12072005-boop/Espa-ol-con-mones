@@ -147,7 +147,7 @@
   }
 
   function practice(el, qs, title, back) {
-    if (!qs.length) { el.innerHTML = '<div class="card empty"><div class="big">✓</div><h3>لا توجد أسئلة مطابقة</h3><a class="btn" href="' + back + '">رجوع</a></div>'; return; }
+    if (!qs.length) { el.innerHTML = '<div class="card empty"><div class="big">✓</div><h3>لا توجد أسئلة مطابقة</h3><p class="muted">تظهر هنا الأسئلة التي أخطأت فيها أكثر مما أصبت. أجب عن أسئلة البنك أو المحاكاة أولًا، ثم ارجع إلى هذه الصفحة.</p><a class="btn" href="' + back + '">رجوع</a></div>'; return; }
     el.innerHTML = '<div class="notice blue mb16">' + esc(title) + ' · ' + qs.length + ' سؤالًا. التصحيح بعد كل إجابة مع شرح عربي ورابط الدرس. <b>أسئلة أصلية</b> وليست أسئلة الدليل الرسمي.</div><div id="bq"></div>';
     ui.quiz(U.$('#bq', el), qs, {
       mode: 'practice', title: title, onAnswer: C().track, lessonLink: ECM.ccseLessonLink,

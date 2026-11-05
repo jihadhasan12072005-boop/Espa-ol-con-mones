@@ -42,10 +42,16 @@
       var got = s.achievements[a.id];
       return '<div class="flex mb8" style="opacity:' + (got ? 1 : 0.45) + '"><span style="font-size:22px;margin-left:10px">' + (got ? '🏅' : '○') + '</span><span class="grow"><b>' + esc(a.t) + '</b><br><small class="muted">' + esc(a.d) + (got ? ' · ' + U.date(got) : '') + '</small></span></div>';
     }).join('') + '</div></div></div>';
-    // history
-    h += '<div class="card"><div class="card-head"><h3>سجل الامتحانات والتدريبات</h3><span class="small muted">آخر 60</span></div>' + (examsN ? '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>التاريخ</th><th>الامتحان</th><th>النتيجة</th><th>المدة</th></tr></thead><tbody>' +
-      U.map(s.exams.slice(0, 60), function (e) { return '<tr><td class="small">' + U.date(e.date) + ' ' + U.time(e.date) + '</td><td>' + esc(e.title || e.kind) + '</td><td><span class="tag ' + (e.passed === false || (e.passed !== true && e.pct < 60) ? 'red' : '') + '">' + e.score + '/' + e.total + ' · ' + e.pct + '%</span></td><td class="small">' + (e.durationSec ? U.mmss(e.durationSec) : '—') + '</td></tr>'; }).join('') +
-      '</tbody></table></div>' : '<p class="muted">لا يوجد سجل بعد.</p>') + '</div>';
+    // history — two separate logs: language vs citizenship
+    function hist(list, empty) {
+      return list.length ? '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>التاريخ</th><th>الامتحان</th><th>النتيجة</th><th>المدة</th></tr></thead><tbody>' +
+        U.map(list.slice(0, 40), function (e) { return '<tr><td class="small">' + U.date(e.date) + ' ' + U.time(e.date) + '</td><td>' + esc(e.title || e.kind) + '</td><td><span class="tag ' + (e.passed === false || (e.passed !== true && e.pct < 60) ? 'red' : '') + '">' + e.score + '/' + e.total + ' · ' + e.pct + '%</span></td><td class="small">' + (e.durationSec ? U.mmss(e.durationSec) : '—') + '</td></tr>'; }).join('') +
+        '</tbody></table></div>' : '<p class="muted">' + empty + '</p>';
+    }
+    var isCit = function (e) { return /^ccse/.test(e.kind || ''); };
+    var citL = U.filter(s.exams, isCit), langL = U.filter(s.exams, function (e) { return !isCit(e); });
+    h += '<div class="row"><div class="c2"><div class="card"><div class="card-head"><h3>🇪🇸 سجل امتحانات اللغة الإسبانية</h3><span class="small muted">' + langL.length + ' · آخر 40</span></div>' + hist(langL, 'لا يوجد سجل لغة بعد.') + '</div></div>' +
+      '<div class="c2"><div class="card"><div class="card-head"><h3>🏛 سجل امتحانات الجنسية CCSE</h3><span class="small muted">' + citL.length + ' · آخر 40</span></div>' + hist(citL, 'لا يوجد سجل CCSE بعد.') + '</div></div></div>';
     // backup
     var lb = s.lastBackupAt;
     h += '<div class="card ' + (!lb ? 'warn' : '') + '" id="backup"><h3>💾 النسخ الاحتياطي (مهم جدًا)</h3>' +

@@ -38,18 +38,30 @@
     return '<div class="c4"><a href="' + href + '" style="text-decoration:none;color:inherit"><div class="card stat"><span class="ic">' + icon + '</span><div class="v">' + v + '</div><div class="l">' + l + '</div></div></a></div>';
   }
 
-  var SECTIONS = [
-    ['learn', 'granvia', 'تعلّم الإسبانية A1–B2', 'قواعد مشروحة كأستاذ، مهارات، وتقييم لكل مستوى.'],
-    ['dele', 'salamanca', 'أكاديمية DELE A2', 'الأقسام الأربعة لامتحان معهد ثربانتس مع محاكاة كاملة.'],
-    ['ccse', 'congreso', 'الجنسية والثقافة — CCSE', 'الدستور والمؤسسات والجغرافيا والثقافة والمجتمع.'],
-    ['exams', 'palacioreal', 'مركز الامتحانات', '300 نموذج: A1، A2، B1، B2، مختلط، CCSE.'],
-    ['speak', 'cafe', 'استوديو المحادثة', 'تكلّم بالإسبانية واحصل على تصحيح بالعربية.'],
-    ['adventures', 'metro', 'مغامرات في إسبانيا', 'مواقف حقيقية: المقهى، الطبيب، البنك، المترو…'],
-    ['lab', 'toledo', 'مختبر القواعد', 'صرّف أي فعل في كل الأزمنة وتدرّب عليه.'],
-    ['vocab', 'mercado', 'أكاديمية المفردات', 'بطاقات وتكرار متباعد حسب المواضيع.'],
-    ['mistakes', 'street', 'دفتر أخطائي', 'أخطاؤك الحقيقية فقط، مع مراجعة متدرّجة.'],
-    ['progress', 'retiro', 'تقدّمي', 'السجل، الإنجازات، والنسخ الاحتياطي.']
+  // Dashboard groups. Language exams and citizenship (CCSE) are deliberately separate areas.
+  var GROUPS = [
+    { t: 'تعلّم الإسبانية', es: 'Aprender español', cls: 'c4', items: [
+      ['learn', 'granvia', 'دروس القواعد A1–B2', 'كل قاعدة مشروحة كأستاذ: جداول، أمثلة، أخطاء، تمارين وتقييم.'],
+      ['verbos', 'toledo', 'مختبر الأفعال', 'تصريف كامل في كل الأزمنة، بحث بالإسبانية أو العربية، مقارنات وتمارين.'],
+      ['vocab', 'mercado', 'أكاديمية المفردات', 'بطاقات وتكرار متباعد حسب المواضيع.'],
+      ['mistakes', 'street', 'دفتر أخطائي', 'أخطاؤك الحقيقية فقط، مع مراجعة متدرّجة.']] },
+    { t: 'أ — امتحانات اللغة الإسبانية', es: 'Exámenes de lengua', cls: 'c2', items: [
+      ['exams', 'palacioreal', 'مركز امتحانات اللغة', '250 نموذجًا: 50 لكل من A1 و A2 و B1 و B2 والمختلط — قواعد ومفردات وقراءة واستماع وكتابة ومحادثة.'],
+      ['dele', 'salamanca', 'أكاديمية DELE A2', 'الأقسام الأربعة لامتحان معهد ثربانتس مع محاكاة كاملة.']] },
+    { t: 'ب — الجنسية الإسبانية (CCSE)', es: 'Ciudadanía · CCSE', cls: 'c3', items: [
+      ['cultura', 'prado', 'دروس الثقافة والجنسية', '32 درسًا مصوّرًا في المجالات الخمسة للدليل الرسمي، مع خرائط ومخططات.'],
+      ['ccse', 'congreso', 'امتحانات الجنسية CCSE', '50 محاكاة كاملة: 25 سؤالًا، 45 دقيقة، النجاح 15.'],
+      ['banco', 'senado', 'بنك أسئلة الجنسية', 'أسئلة تدريبية أصلية مصنّفة حسب الدرس والصعوبة، مع متتبّع أسئلة الدليل الرسمي.']] },
+    { t: 'التطبيق العملي ومتابعتي', es: 'Práctica', cls: 'c3', items: [
+      ['speak', 'cafe', 'استوديو المحادثة', 'تكلّم بالإسبانية واحصل على تصحيح بالعربية.'],
+      ['adventures', 'metro', 'مغامرات في إسبانيا', 'مواقف حقيقية: المقهى، الطبيب، البنك، المترو…'],
+      ['progress', 'retiro', 'تقدّمي', 'السجلّان المنفصلان، الإنجازات، والنسخ الاحتياطي.']] }
   ];
+  function groupHtml(g) {
+    return ui.secTitle(g.t, '<span class="small muted es" lang="es">' + g.es + '</span>') + '<div class="row">' + U.map(g.items, function (x) {
+      return '<div class="' + g.cls + '"><a class="tile" href="#/' + x[0] + '"><div class="ph" style="height:118px;' + ui.photoStyle(x[1], true) + '"></div><div class="body"><h3 style="font-size:17px">' + x[2] + '</h3><p class="small">' + x[3] + '</p></div></a></div>';
+    }).join('') + '</div>';
+  }
 
   ECM.views.home = function (el) {
     ECM.app.crumbs([{ t: 'لوحة مؤنس' }]);
@@ -69,7 +81,7 @@
       '<p>مستواك الحالي <span class="lvl">' + esc(s.profile.level) + '</span> — ' +
       (next ? 'درسك المقترح اليوم: <b>' + esc(next.ta) + '</b>' : 'أكملت جميع دروس القواعد! ركّز الآن على الامتحانات والمحادثة.') + '</p>' +
       '<div class="btns flex wrap mt16">' + (next ? '<a class="btn gold lg" href="#/learn/' + next.lv + '/' + next.id + '">تابع التعلّم ←</a>' : '<a class="btn gold lg" href="#/exams">مركز الامتحانات ←</a>') +
-      '<a class="btn light lg" href="#/ccse">تدرّب على CCSE</a>' + (dueM ? '<a class="btn light lg" href="#/mistakes">راجع ' + dueM + ' خطأ</a>' : '') + '</div></div>' + ui.photoCredit('granvia') + '</section>';
+      '<a class="btn light lg" href="#/ciudadania">الجنسية CCSE</a>' + (dueM ? '<a class="btn light lg" href="#/mistakes">راجع ' + dueM + ' خطأ</a>' : '') + '</div></div>' + ui.photoCredit('granvia') + '</section>';
 
     // stats
     h += '<div class="row mt24">' +
@@ -91,18 +103,20 @@
         var p = ECM.course.progress(L.id);
         return '<a href="#/learn/' + L.id + '" class="flex mb8" style="text-decoration:none;color:inherit"><span class="lvl" style="margin-left:10px">' + L.id + '</span><span class="grow">' + ui.bar(p.pct) + '</span><span class="small muted" style="width:80px;text-align:left">' + p.done + '/' + p.total + '</span></a>';
       }).join('') + '</div></div>';
-    var recent = s.exams.slice(0, 5);
-    h += '<div class="c2"><div class="card"><div class="card-head"><h3>آخر الامتحانات</h3><a class="small" href="#/progress">السجل الكامل</a></div>' +
-      (recent.length ? '<ul class="list">' + U.map(recent, function (e) {
+    function recentList(list, empty, href) {
+      return list.length ? '<ul class="list">' + U.map(list, function (e) {
         return '<li class="flex"><span class="grow"><b>' + esc(e.title || e.kind) + '</b><br><small class="muted">' + U.date(e.date) + '</small></span><span class="tag ' + (e.passed === false || e.pct < 60 ? 'red' : '') + '">' + e.score + '/' + e.total + ' · ' + e.pct + '%</span></li>';
-      }).join('') + '</ul>' : '<div class="empty">لم تُجرِ أي امتحان بعد. <br><a class="btn sm mt8" href="#/exams">ابدأ أول امتحان</a></div>') + '</div></div>';
+      }).join('') + '</ul>' : '<div class="empty small">' + empty + ' <a href="' + href + '">ابدأ الآن</a></div>';
+    }
+    var isCit = function (e) { return /^ccse/.test(e.kind || ''); };
+    var recL = U.filter(s.exams, function (e) { return !isCit(e); }).slice(0, 3), recC = U.filter(s.exams, isCit).slice(0, 3);
+    h += '<div class="c2"><div class="card"><div class="card-head"><h3>آخر الامتحانات</h3><a class="small" href="#/progress">السجل الكامل</a></div>' +
+      '<h4 class="mb8">🇪🇸 اللغة الإسبانية</h4>' + recentList(recL, 'لا امتحانات لغة بعد.', '#/exams') +
+      '<h4 class="mb8 mt16">🏛 الجنسية CCSE</h4>' + recentList(recC, 'لا امتحانات CCSE بعد.', '#/ccse') + '</div></div>';
     h += '</div>';
 
-    // sections
-    h += ui.secTitle('أقسام الأكاديمية');
-    h += '<div class="row">' + U.map(SECTIONS, function (x) {
-      return '<div class="c5"><a class="tile" href="#/' + x[0] + '"><div class="ph" style="height:118px;' + ui.photoStyle(x[1], true) + '"></div><div class="body"><h3 style="font-size:17px">' + x[2] + '</h3><p class="small">' + x[3] + '</p></div></a></div>';
-    }).join('') + '</div>';
+    // sections (grouped)
+    h += U.map(GROUPS, groupHtml).join('');
 
     // achievements
     var ach = U.filter(ECM.achievements.LIST, function (a) { return s.achievements[a.id]; });

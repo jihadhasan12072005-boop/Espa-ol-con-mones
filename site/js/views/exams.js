@@ -79,6 +79,28 @@
     return out;
   }
 
+  var rlCache = {};
+  X.skillPool = function (lv, kind) {
+    var key = lv + kind; if (rlCache[key]) return rlCache[key];
+    var out = [], E = (ECM.EXAM_SKILLS || {})[lv] || {};
+    U.each(E[kind === 'reading' ? 'read' : 'listen'] || [], function (r, i) {
+      var q = { id: 'xs-' + lv + '-' + kind + '-' + i, type: 'mc', stem: r[1], stemLang: 'es', noSay: true, opts: r[2], answer: r[3], why: r[4], level: lv,
+        topic: kind === 'reading' ? 'فهم المقروء' : 'فهم المسموع', src: (kind === 'reading' ? 'قراءة ' : 'استماع ') + lv };
+      if (kind === 'reading') q.passage = r[0]; else q.audioLines = r[0];
+      out.push(q);
+    });
+    U.each(U.filter(ECM.SKILLS || [], function (s) { return s.lv === lv && s.kind === kind; }), function (s) {
+      U.each(s.q, function (r, i) {
+        var q = { id: s.id + '-q' + i, type: r[1] === 'tf' ? 'tf' : 'mc', stem: r[0], stemLang: 'es', noSay: true, opts: r[1] === 'tf' ? null : r[1], answer: r[2], why: r[3], level: lv,
+          topic: kind === 'reading' ? 'فهم المقروء' : 'فهم المسموع', src: s.ta };
+        if (kind === 'reading') q.passage = s.text; else q.audioLines = s.lines;
+        out.push(q);
+      });
+    });
+    rlCache[key] = out;
+    return out;
+  };
+
   X.levelModel = function (lv, n) {
     var seed = U.hash(lv) % 100000;
     var g = windowPick(X.grammarPool(lv), 10, n, seed);
@@ -86,7 +108,8 @@
     while (cj.length < 5 && guard++ < 60) { var c = X.conjItem(lv, rnd); if (!cj.find(function (x) { return x.id === c.id; })) cj.push(c); }
     guard = 0;
     while (vc.length < 5 && guard++ < 60) { var v = X.vocabItem(lv, rnd); if (!vc.find(function (x) { return x.id.split('-').slice(0, -1).join('-') === v.id.split('-').slice(0, -1).join('-'); })) vc.push(v); }
-    return U.shuffle(g.concat(cj, vc), U.rng(seed + n));
+    var rd = windowPick(X.skillPool(lv, 'reading'), 2, n, seed + 17), ls = windowPick(X.skillPool(lv, 'listening'), 2, n, seed + 29);
+    return U.shuffle(g.concat(cj, vc), U.rng(seed + n)).concat(rd, ls);
   };
 
   X.mixedModel = function (n) {
@@ -97,7 +120,9 @@
       var c = X.conjItem(lv, U.rng(seed + n * 131));
       out = out.concat(g, [c]);
     });
-    return out; // progressive: A1 → B2
+    // one reading + one listening item (A2/B1) so the mixed model also covers comprehension
+    out = out.concat(windowPick(X.skillPool('A2', 'reading'), 1, n, 77), windowPick(X.skillPool('B1', 'listening'), 1, n, 91));
+    return out; // progressive: A1 → B2, then comprehension
   };
 
   X.MODELS = 50;
@@ -107,8 +132,8 @@
     { id: 'B1', t: 'نماذج B1', d: 'الـ subjuntivo، الرأي، الشرطي، الكلام المنقول.', photo: 'sevilla' },
     { id: 'B2', t: 'نماذج B2', d: 'الشرط بأنواعه، توافق الأزمنة، الاستدراك، المبني للمجهول.', photo: 'toledo' },
     { id: 'mixed', t: 'نماذج مختلطة A1–B2', d: 'أسئلة متدرّجة من A1 إلى B2 في امتحان واحد.', photo: 'salamanca' },
-    { id: 'ccse', t: 'نماذج CCSE', d: '25 سؤالًا، 45 دقيقة، النجاح بـ 15: بنفس توزيع المهام الخمس.', photo: 'congreso' }
   ];
+  X.isLang = function (e) { return e.kind === 'level' || e.kind === 'mixed' || e.kind === 'dele' || e.kind === 'dele-self' || e.kind === 'vocab'; };
 
   function history(kind, ref) {
     var m = {};
@@ -120,30 +145,52 @@
   }
 
   function center(el) {
-    ECM.app.crumbs([{ t: 'مركز الامتحانات' }]);
-    var h = ui.hero('palacioreal', 'CENTRO DE EXÁMENES', 'مركز الامتحانات — 300 نموذج',
-      'خمسون نموذجًا لكل فئة. كل نموذج ثابت لتقيس تقدّمك عند إعادته، والتصحيح المفصّل يظهر بعد التسليم، وكل خطأ يُحفظ في دفترك.');
-    h += '<div class="row mt24">' + U.map(X.cats, function (c) {
+    ECM.app.crumbs([{ t: 'امتحانات اللغة الإسبانية' }]);
+    var langs = U.filter(ECM.store.state.exams, X.isLang), last = langs.slice(0, 12);
+    var avg = langs.length ? Math.round(U.sum(langs, function (e) { return e.pct || 0; }) / langs.length) : 0;
+    var h = ui.hero('palacioreal', 'EXÁMENES DE LENGUA ESPAÑOLA', 'امتحانات اللغة الإسبانية',
+      '250 نموذجًا لغويًا (A1، A2، B1، B2، مختلط — 50 لكل فئة) بأسئلة قواعد ومفردات وتصريف وقراءة واستماع، مع مهمة كتابة ومحادثة بعد كل نموذج، إضافة إلى أكاديمية DELE A2 بالمحاكاة الكاملة. امتحانات الجنسية في قسم منفصل.');
+    h += '<div class="row mt24"><div class="c4"><div class="card stat"><div class="v">' + langs.length + '</div><div class="l">امتحان لغوي منجز</div></div></div><div class="c4"><div class="card stat"><div class="v">' + avg + '%</div><div class="l">متوسط نتائج اللغة</div></div></div>' +
+      '<div class="c4"><div class="card stat"><div class="v">' + U.filter(langs, function (e) { return e.kind === 'dele' || e.kind === 'dele-self'; }).length + '</div><div class="l">قسم DELE منجز</div></div></div><div class="c4"><a href="#/ciudadania" style="text-decoration:none"><div class="card stat gold"><div class="v">★</div><div class="l">امتحانات الجنسية CCSE ← قسم منفصل</div></div></a></div></div>';
+    h += '<div class="row">' + U.map(X.cats, function (c) {
       var hist = history(c.id), done = U.keys(hist).length;
-      return '<div class="c3"><a class="tile" href="#/exams/' + (c.id === 'ccse' || c.id === 'mixed' ? c.id : 'level/' + c.id) + '"><div class="ph" style="' + ui.photoStyle(c.photo, true) + '"><span class="tag light">50 نموذجًا</span></div><div class="body"><h3>' + c.t + '</h3><p>' + c.d + '</p>' +
+      return '<div class="c3"><a class="tile" href="#/exams/' + (c.id === 'mixed' ? c.id : 'level/' + c.id) + '"><div class="ph" style="' + ui.photoStyle(c.photo, true) + '"><span class="tag light">50 نموذجًا</span></div><div class="body"><h3>' + c.t + '</h3><p>' + c.d + '</p>' +
         '<div class="mt8">' + ui.bar(done * 2) + '</div><div class="meta">' + done + ' / 50 نموذجًا أُنجز</div></div></a></div>';
-    }).join('') + '</div>';
-    var pools = U.map(LV, function (lv) { return lv + ': ' + X.grammarPool(lv).length; }).join(' · ');
+    }).join('') + '<div class="c3"><a class="tile" href="#/dele"><div class="ph" style="' + ui.photoStyle('salamanca', true) + '"><span class="tag light">المهارات الأربع</span></div><div class="body"><h3>أكاديمية DELE A2</h3><p>هيكل امتحان معهد ثربانتس: قراءة، استماع، كتابة، محادثة — ومحاكاتان كاملتان.</p><div class="meta">ادخل ←</div></div></a></div></div>';
+    var pools = U.map(LV, function (lv) { return lv + ': ' + X.grammarPool(lv).length + ' + ' + (X.skillPool(lv, 'reading').length + X.skillPool(lv, 'listening').length); }).join(' · ');
     h += '<div class="row"><div class="c2"><div class="card"><h3>كيف بُنيت النماذج؟</h3><ul>' +
-      '<li>كل نموذج لغوي = <b>20 سؤالًا</b>: 10 أسئلة قواعد واستخدام مكتوبة يدويًا، 5 أسئلة تصريف يولّدها محرّك تصريف مختبَر (153 اختبارًا آليًا)، و5 أسئلة مفردات من موضوعات المستوى.</li>' +
-      '<li>بنك القواعد المكتوب يدويًا حاليًا: <span dir="ltr">' + pools + '</span> سؤالًا. تتوزّع على النماذج الخمسين بالتناوب بحيث لا يتطابق نموذجان.</li>' +
-      '<li>نماذج CCSE من بنك أصلي فيه ' + ECM.CCSE.bank.length + ' سؤالًا، بنفس توزيع المهام الرسمي.</li>' +
-      '<li><b>تنبيه:</b> هذه امتحانات تدريبية للقواعد والمفردات. محاكاة DELE A2 الكاملة بمهاراتها الأربع موجودة في <a href="#/dele">أكاديمية DELE</a>.</li></ul></div></div>' +
-      '<div class="c2"><div class="card gold"><h3>نصيحة</h3><p>ابدأ بنماذج مستواك الحالي (' + esc(ECM.store.state.profile.level) + '). عندما تتجاوز 80% في ثلاثة نماذج متتالية، انتقل إلى المستوى التالي. للجنسية: ركّز على A2 و CCSE.</p><a class="btn" href="#/exams/level/A2">نماذج A2</a> <a class="btn navy" href="#/exams/ccse">نماذج CCSE</a></div></div></div>';
+      '<li>كل نموذج مستوى = <b>24 سؤالًا</b>: 10 قواعد واستخدام (مكتوبة يدويًا)، 5 تصريف (محرّك مختبَر)، 5 مفردات، 2 فهم مقروء، 2 فهم مسموع. وبعد التسليم <b>مهمة كتابة</b> و<b>مهمة محادثة</b> مع مراجعة آلية مساعدة.</li>' +
+      '<li>البنوك المكتوبة يدويًا (قواعد + قراءة/استماع): <span dir="ltr">' + pools + '</span>. تتوزّع على النماذج الخمسين بالتناوب، ولا يتطابق نموذجان (يُتحقَّق من ذلك آليًا).</li>' +
+      '<li>النماذج المختلطة متدرّجة من A1 إلى B2.</li></ul></div></div>' +
+      '<div class="c2"><div class="card"><h3>سجل امتحانات اللغة فقط</h3>' + (ECM.historyTable ? ECM.historyTable(last) : '') + '</div></div></div>';
     el.innerHTML = h;
+  }
+
+  var WRITE = { A1: 'Escribe un mensaje (40–50 palabras) a un amigo: preséntate y cuéntale qué haces un día normal.', A2: 'Escribe un correo (60–70 palabras) a un amigo contándole qué hiciste el fin de semana pasado y qué vas a hacer el próximo.', B1: 'Escribe tu opinión (100 palabras): ¿es mejor vivir en el centro de una ciudad o en las afueras? Da dos argumentos.', B2: 'Escribe un texto argumentativo (150 palabras): ventajas e inconvenientes del teletrabajo. Usa al menos dos conectores formales.', mixed: 'Escribe un texto (80 palabras) sobre tu primer año en España: qué pasó, cómo te sentías y qué ha cambiado.' };
+  var WORDS = { A1: 45, A2: 65, B1: 100, B2: 150, mixed: 80 };
+  function speakPrompt(kind, n) {
+    var lv = kind === 'mixed' ? ['A1', 'A2', 'B1', 'B2'][n % 4] : kind;
+    var cs = U.filter(ECM.SPEAK.convos, function (c) { return c.lv === lv; });
+    if (!cs.length) cs = ECM.SPEAK.convos;
+    var c = cs[n % cs.length], q = c.q[n % c.q.length];
+    return q;
+  }
+  function productionTasks(el, kind, n) {
+    var sp = speakPrompt(kind, n), box = document.createElement('div');
+    box.innerHTML = '<div class="card gold"><span class="eyebrow">EXPRESIÓN ESCRITA Y ORAL</span><h3>مهمتا الإنتاج لهذا النموذج</h3><p class="small">لا تدخلان في النسبة المئوية؛ تُراجعان آليًا لأخطاء محددة شائعة، وهذا ليس تقييمًا رسميًا.</p>' +
+      '<h4>✍ الكتابة</h4><div class="reading-text" lang="es">' + esc(WRITE[kind]) + '</div><div id="wTask" class="mt8"></div>' +
+      '<h4 class="mt16">🎤 المحادثة</h4><div class="bubble them"><span class="es" lang="es" dir="ltr">' + esc(sp[0]) + '</span> ' + U.say(sp[0], 'استمع', 'light') + '<div class="small muted mt8">' + esc(sp[1]) + '</div></div><div id="sTask"></div></div>';
+    el.appendChild(box);
+    ECM.speakBox(U.$('#wTask', box), { key: 'exam-w-' + kind + '-' + n, prompt: WRITE[kind], target: WORDS[kind], checkLabel: 'راجع نصّي' });
+    ECM.speakBox(U.$('#sTask', box), { prompt: sp[0], expected: sp[2], model: sp[3] });
   }
 
   function grid(el, kind) {
     var cat = X.cats.find(function (c) { return c.id === kind; });
-    ECM.app.crumbs([{ t: 'مركز الامتحانات', href: '#/exams' }, { t: cat.t }]);
+    ECM.app.crumbs([{ t: 'امتحانات اللغة', href: '#/exams' }, { t: cat.t }]);
     var hist = history(kind), base = kind === 'ccse' ? '#/exams/ccse/' : (kind === 'mixed' ? '#/exams/mixed/' : '#/exams/level/' + kind + '/');
     var nextN = 1; while (hist[nextN] && nextN < 50) nextN++;
-    var info = kind === 'ccse' ? '25 سؤالًا · 45 دقيقة · النجاح بـ 15 إجابة صحيحة' : '20 سؤالًا · 25 دقيقة · الهدف 60% على الأقل';
+    var info = kind === 'mixed' ? '22 سؤالًا · 30 دقيقة · الهدف 60%' : '24 سؤالًا · 30 دقيقة · الهدف 60% + مهمتا كتابة ومحادثة';
     var h = '<div class="card navy"><span class="eyebrow">' + esc(cat.t) + '</span><h1 style="color:#fff">' + esc(cat.t) + '</h1><p class="muted">' + esc(cat.d) + ' — ' + info + '</p><a class="btn gold lg" href="' + base + nextN + '">ابدأ النموذج ' + nextN + '</a></div>';
     h += '<div class="card"><h3>النماذج</h3><p class="small muted">الأخضر: 60% فأكثر (أو ناجح في CCSE)، الأحمر: أقل من ذلك. مرّر المؤشر لرؤية أفضل نتيجة.</p><div class="qnav">';
     for (var i = 1; i <= 50; i++) {
@@ -155,15 +202,16 @@
 
   function run(el, kind, n) {
     n = Math.max(1, Math.min(50, parseInt(n, 10) || 1));
-    if (kind === 'ccse') { ECM.runCcseSim(el, n, '#/exams/ccse'); return; }
+    if (kind === 'ccse') { ECM.app.go('#/ccse/sim/' + n); return; }
     var cat = X.cats.find(function (c) { return c.id === kind; });
     var back = kind === 'mixed' ? '#/exams/mixed' : '#/exams/level/' + kind;
     ECM.app.crumbs([{ t: 'مركز الامتحانات', href: '#/exams' }, { t: cat.t, href: back }, { t: 'النموذج ' + n }]);
     var qs = kind === 'mixed' ? X.mixedModel(n) : X.levelModel(kind, n);
-    el.innerHTML = '<div class="notice blue mb16">' + esc(cat.t) + ' · النموذج ' + n + ' · ' + qs.length + ' سؤالًا · 25 دقيقة. يمكنك التنقل بين الأسئلة وتغيير إجاباتك قبل التسليم.</div><div id="exQ"></div>';
+    el.innerHTML = '<div class="notice blue mb16">' + esc(cat.t) + ' · النموذج ' + n + ' · ' + qs.length + ' سؤالًا · 30 دقيقة. يمكنك التنقل بين الأسئلة وتغيير إجاباتك قبل التسليم.</div><div id="exQ"></div>';
     ui.quiz(U.$('#exQ', el), qs, {
-      mode: 'exam', title: cat.t + ' · ' + n, timeLimit: 25 * 60, passPct: 60,
+      mode: 'exam', title: cat.t + ' · ' + n, timeLimit: 30 * 60, passPct: 60,
       record: { kind: kind === 'mixed' ? 'mixed' : 'level', level: kind === 'mixed' ? 'A1–B2' : kind, ref: n, title: cat.t + ' · النموذج ' + n },
+      onFinish: function (r, box) { productionTasks(box, kind, n); },
       onRetry: function () { run(el, kind, n); },
       onExit: function () { ECM.app.go(back); }
     });
@@ -172,8 +220,9 @@
   ECM.views.exams = function (el, args) {
     if (args[0] === 'level' && args[1] && args[2]) run(el, args[1], args[2]);
     else if (args[0] === 'level' && args[1]) grid(el, args[1]);
-    else if ((args[0] === 'mixed' || args[0] === 'ccse') && args[1]) run(el, args[0], args[1]);
-    else if (args[0] === 'mixed' || args[0] === 'ccse') grid(el, args[0]);
+    else if (args[0] === 'ccse') ECM.app.go(args[1] ? '#/ccse/sim/' + args[1] : '#/ccse');
+    else if (args[0] === 'mixed' && args[1]) run(el, args[0], args[1]);
+    else if (args[0] === 'mixed') grid(el, args[0]);
     else center(el);
   };
 })(window.ECM);

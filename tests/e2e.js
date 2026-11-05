@@ -10,6 +10,7 @@ const ROUTES = ['/', '/learn', '/learn/A1', '/learn/A1/a1-01', '/learn/A2/a2-01'
   '/dele', '/dele/part/lectura', '/dele/part/oral', '/dele/sim/A', '/dele/sim/A/lectura', '/dele/sim/B/auditiva', '/dele/sim/A/escrita', '/dele/sim/B/oral',
   '/ccse', '/ccse/topic/t1-const', '/ccse/topic/t3-territorio', '/ccse/sim', '/ccse/sim/7', '/ccse/analysis',
   '/exams', '/exams/level/A1', '/exams/level/B2/50', '/exams/mixed', '/exams/mixed/3', '/exams/ccse', '/exams/ccse/12',
+  '/ciudadania', '/cultura', '/cultura/c1-01', '/cultura/c3-01', '/cultura/c5-03', '/banco', '/banco/leccion/c1-02', '/banco/dificiles', '/banco/oficial', '/cobertura', '/verbos',
   '/speak', '/speak/c/medico', '/speak/p/r-rr', '/adventures', '/adventures/cafe', '/adventures/tienda', '/mistakes', '/mistakes/review', '/progress', '/does-not-exist'];
 
 const results = [];
@@ -49,14 +50,14 @@ function bad(name, detail) { results.push(['FAIL', name, detail || '']); console
     const { ctx, p } = await page();
     await p.goto(base + '#/exams/level/A1/1'); await p.waitForTimeout(300);
     // answer every question with the first option / some text
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 24; i++) {
       if (await p.$('#qType')) await p.fill('#qType', 'xx'); else await p.click('[data-opt="0"]');
       const next = await p.$('[data-act="next"]'); if (next) await next.click();
     }
     p.once('dialog', d => d.accept());
     await p.click('[data-act="submit"]'); await p.waitForTimeout(400);
     const rep = await p.evaluate(() => document.getElementById('exQ').innerText);
-    (/النتيجة/.test(rep) && /من 20 سؤالًا|من <b>20/.test(rep) || /20/.test(rep) ? ok : bad)('exam submits and shows report');
+    (/النتيجة/.test(rep) && /24/.test(rep) ? ok : bad)('exam submits and shows report');
     const st = await p.evaluate(() => ({ exams: ECM.store.state.exams.length, mistakes: Object.keys(ECM.store.state.mistakes).length }));
     (st.exams === 1 ? ok : bad)('exam saved to history', JSON.stringify(st));
     (st.mistakes > 0 ? ok : bad)('wrong answers saved to mistake notebook', st.mistakes + ' mistakes');

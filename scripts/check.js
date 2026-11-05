@@ -92,7 +92,7 @@ var X = E.exams, total = 0;
   var sets = {};
   for (var n = 1; n <= 50; n++) {
     var m = k === 'mixed' ? X.mixedModel(n) : X.levelModel(k, n);
-    if (m.length !== 20) fail(k + ' model ' + n + ': ' + m.length + ' questions');
+    if (m.length !== (k === 'mixed' ? 22 : 24)) fail(k + ' model ' + n + ': ' + m.length + ' questions');
     m.forEach(function (q, i) { checkQ(q, k + '#' + n + '.' + i); });
     var key = m.map(function (q) { return q.id; }).sort().join(',');
     if (sets[key]) fail(k + ': model ' + n + ' duplicates model ' + sets[key]); sets[key] = n;
@@ -108,7 +108,19 @@ for (var n = 1; n <= 50; n++) {
   var key = m.map(function (q) { return q.id; }).sort().join(',');
   if (cs[key]) fail('ccse model duplicate ' + n); cs[key] = n; total++;
 }
-notes.push('exam models verified: ' + total + ' (CCSE bank ' + E.CCSE.bank.length + ' original questions)');
+notes.push('exam models verified: ' + total + ' (CCSE bank ' + E.CCSE.all.length + ' original (non-official) questions incl. ' + E.CCSE.bank.length + ' legacy)');
+// culture academy
+var CL = E.CULTURE || [], cids = {};
+CL.forEach(function (l) {
+  if (cids[l.id]) fail('culture duplicate ' + l.id); cids[l.id] = 1;
+  if (!l.sections || l.sections.length < 2) fail(l.id + ': needs ≥2 sections');
+  if (!l.q || l.q.length < 3) fail(l.id + ': needs ≥3 practice questions');
+  (l.memorize || []).length || fail(l.id + ': no facts to memorize');
+});
+var areas = {}; CL.forEach(function (l) { areas[l.area] = (areas[l.area] || 0) + 1; });
+[1, 2, 3, 4, 5].forEach(function (a) { if (!areas[a]) fail('culture area ' + a + ' has no lessons'); });
+var qids = {}; E.CCSE.all.forEach(function (q, i) { if (qids[q.id]) fail('CCSE dup id ' + q.id); qids[q.id] = 1; checkQ(q, 'CCSE.all ' + q.id); if (q.lesson && !cids[q.lesson]) fail(q.id + ' → unknown lesson ' + q.lesson); });
+notes.push('culture lessons: ' + CL.length + ' ' + JSON.stringify(areas));
 // DELE
 E.DELE.sims.forEach(function (S) {
   ['lectura', 'auditiva'].forEach(function (p) {
