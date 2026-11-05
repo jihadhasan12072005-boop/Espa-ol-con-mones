@@ -1,0 +1,117 @@
+{
+ "granvia": [
+  {
+   "title": "File:Madrid Gran Via Metropolis (28895522813).jpg",
+   "w": 6480,
+   "h": 4320,
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Madrid_Gran_Via_Metropolis_%2828895522813%29.jpg/1280px-Madrid_Gran_Via_Metropolis_%2828895522813%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Madrid_Gran_Via_Metropolis_(28895522813).jpg",
+   "license": "CC BY 2.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+   "artist": "Nan Palmero from San Antonio, TX, USA",
+   "file": "granvia-1.jpg",
+   "size": [
+    1280,
+    853
+   ]
+  }
+ ],
+ "palacioreal": [
+  {
+   "title": "File:Palacio Real, Aranjuez, Madrid.jpg",
+   "w": 7774,
+   "h": 5183,
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4e/Palacio_Real%2C_Aranjuez%2C_Madrid.jpg/1280px-Palacio_Real%2C_Aranjuez%2C_Madrid.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Palacio_Real,_Aranjuez,_Madrid.jpg",
+   "license": "CC BY-SA 4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+   "artist": "Javier Montes",
+   "file": "palacioreal-1.jpg",
+   "size": [
+    1280,
+    853
+   ]
+  },
+  {
+   "title": "File:Palacio Real de Madrid-Fachada Sur.jpg",
+   "w": 1600,
+   "h": 1200,
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/Palacio_Real_de_Madrid-Fachada_Sur.jpg/1280px-Palacio_Real_de_Madrid-Fachada_Sur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Palacio_Real_de_Madrid-Fachada_Sur.jpg",
+   "license": "CC BY-SA 4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+   "artist": "Basilio",
+   "file": "palacioreal-2.jpg",
+   "size": [
+    1280,
+    960
+   ]
+  }
+ ],
+ "plazamayor": [
+  {
+   "title": "File:Plaza Mayor de Madrid - 01.jpg",
+   "w": 3888,
+   "h": 2916,
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/Plaza_Mayor_de_Madrid_-_01.jpg/1280px-Plaza_Mayor_de_Madrid_-_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Plaza_Mayor_de_Madrid_-_01.jpg",
+   "license": "CC BY-SA 3.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+   "artist": "Carlos Delgado",
+   "file": "plazamayor-1.jpg",
+   "size": [
+    1280,
+    960
+   ]
+  }
+ ],
+ "retiro": [
+  {
+   "title": "File:Monumento a Alfonso XII de España en los Jardines del Retiro - 04.jpg",
+   "w": 4732,
+   "h": 2839,
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4e/Monumento_a_Alfonso_XII_de_Espa%C3%B1a_en_los_Jardines_del_Retiro_-_04.jpg/1280px-Monumento_a_Alfonso_XII_de_Espa%C3%B1a_en_los_Jardines_del_Retiro_-_04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Monumento_a_Alfonso_XII_de_Espa%C3%B1a_en_los_Jardines_del_Retiro_-_04.jpg",
+   "license": "CC BY-SA 3.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+   "artist": "Carlos Delgado",
+   "file": "retiro-1.jpg",
+   "size": [
+    1280,
+    768
+   ]
+  }
+ ],
+ "segovia": [
+  {
+   "title": "File:Acueducto de Segovia 01.jpg",
+   "w": 20736,
+   "h": 13824,
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/19/Acueducto_de_Segovia_01.jpg/1280px-Acueducto_de_Segovia_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Acueducto_de_Segovia_01.jpg",
+   "license": "CC BY-SA 3.0 es",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/es/deed.en",
+   "artist": "David Corral Gadea",
+   "file": "segovia-1.jpg",
+   "size": [
+    1280,
+    853
+   ]
+  },
+  {
+   "title": "File:AcueductoSegovia04.JPG",
+   "w": 2048,
+   "h": 1536,
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/AcueductoSegovia04.JPG/1280px-AcueductoSegovia04.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:AcueductoSegovia04.JPG",
+   "license": "CC BY-SA 3.0",
+   "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+   "artist": "Manuel González Olaechea y Franco",
+   "file": "segovia-2.jpg",
+   "size": [
+    1280,
+    960
+   ]
+  }
+ ]
+}
