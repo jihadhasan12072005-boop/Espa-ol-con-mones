@@ -6,7 +6,7 @@ CC BY / CC BY-SA) landscape JPEGs, downloads up to two 1280px thumbnails,
 re-encodes them, and writes credits + a contact sheet so a human (or Claude)
 can pick the best one. Chosen photos are then copied into site/img/photos.
 """
-import json, os, sys, time, urllib.parse, urllib.request, io
+import json, os, sys, time, urllib.parse, urllib.request, urllib.error, io
 
 UA = "EspanolConMonesBuild/1.0 (educational project; github.com/jihadhasan12072005-boop/Espa-ol-con-mones)"
 API = "https://commons.wikimedia.org/w/api.php"
@@ -23,7 +23,7 @@ SUBJECTS = [
     ("metro", "Metro de Madrid estación andén"),
     ("congreso", "Congreso de los Diputados Madrid fachada"),
     ("mercado", "Mercado de San Miguel Madrid"),
-    ("granada", "Alhambra Granada"),
+    ("granada", "Alhambra Granada vista"),
     ("salamanca", "Plaza Mayor Salamanca"),
     ("valencia", "Ciudad de las Artes y las Ciencias Valencia"),
     ("bilbao", "Museo Guggenheim Bilbao"),
@@ -34,6 +34,10 @@ SUBJECTS = [
     ("bank", "Banco de España Madrid edificio"),
     ("tienda", "Calle Preciados Madrid"),
     ("cordoba", "Mezquita Córdoba interior"),
+    ("ronda", "Puente Nuevo Ronda"),
+    ("cadiz", "Cádiz catedral playa"),
+    ("pueblo", "pueblo blanco Andalucía"),
+    ("tapas", "tapas bar Spain"),
     ("cibeles", "Fuente de Cibeles Madrid"),
     ("retiro", "Parque del Retiro estanque Madrid"),
     ("segovia", "Acueducto de Segovia"),
@@ -42,11 +46,21 @@ ALLOWED = ("cc0", "cc by", "cc-by", "public domain", "pd")
 
 
 def get(params):
-    params = dict(params, format="json", formatversion="2")
+    params = dict(params, format="json", formatversion="2", maxlag="5")
     url = API + "?" + urllib.parse.urlencode(params)
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=40) as r:
-        return json.load(r)
+    for attempt in range(5):
+        req = urllib.request.Request(url, headers={"User-Agent": UA})
+        try:
+            with urllib.request.urlopen(req, timeout=40) as r:
+                time.sleep(3)
+                return json.load(r)
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < 4:
+                wait = 20 * (attempt + 1)
+                print("429 — waiting", wait, "s")
+                time.sleep(wait)
+                continue
+            raise
 
 
 def search(q, extra):
@@ -88,9 +102,17 @@ def ok(c):
 
 def download(url, path):
     from PIL import Image
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        data = r.read()
+    data = None
+    for attempt in range(4):
+        req = urllib.request.Request(url, headers={"User-Agent": UA})
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                data = r.read()
+            break
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < 3:
+                time.sleep(30 * (attempt + 1)); continue
+            raise
     im = Image.open(io.BytesIO(data)).convert("RGB")
     if im.width > 1280:
         im = im.resize((1280, round(im.height * 1280 / im.width)), Image.LANCZOS)
@@ -100,8 +122,11 @@ def download(url, path):
 
 def main():
     os.makedirs(OUT, exist_ok=True)
-    credits = {}
+    cpath = os.path.join(OUT, "credits.json")
+    credits = json.load(open(cpath, encoding="utf-8")) if os.path.exists(cpath) else {}
     for key, q in SUBJECTS:
+        if key in credits:
+            continue
         picked = []
         for extra in ("incategory:Quality_images", ""):
             try:
@@ -126,7 +151,7 @@ def main():
                 print("OK", fn, size, c["license"], c["title"])
             except Exception as e:  # noqa
                 print("download failed", key, c["title"], e)
-            time.sleep(1)
+            time.sleep(4)
         if key not in credits:
             print("NONE for", key)
     with open(os.path.join(OUT, "credits.json"), "w", encoding="utf-8") as f:

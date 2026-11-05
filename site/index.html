@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Español con Mones — أكاديمية الإسبانية</title>
+<meta name="description" content="أكاديمية إسبانية متكاملة للناطقين بالعربية: من A1 إلى B2، التحضير لامتحان DELE A2 وامتحان الجنسية CCSE.">
+<meta name="theme-color" content="#0E2240">
+<link rel="icon" href="img/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/icon-180.png">
+<link rel="stylesheet" href="css/app.css?v=20261105">
+</head>
+<body>
+<a href="#main" class="sr">تخطَّ إلى المحتوى</a>
+<aside class="sidebar" id="sidebar" aria-label="القائمة الرئيسية">
+  <a class="brand" href="#/">
+    <span class="brand-mark" aria-hidden="true">Ñ</span>
+    <span><b class="display-es" lang="es">Español con Mones</b><small>أكاديمية الإسبانية · DELE A2 · CCSE</small></span>
+  </a>
+  <nav class="nav" id="nav">
+    <a href="#/" data-r="home"><span class="ic">⌂</span>الرئيسية</a>
+    <div class="nav-group">التعلّم</div>
+    <a href="#/learn" data-r="learn"><span class="ic">Ⅰ</span>تعلّم الإسبانية A1–B2</a>
+    <a href="#/lab" data-r="lab"><span class="ic">⚗</span>مختبر القواعد</a>
+    <a href="#/vocab" data-r="vocab"><span class="ic">✦</span>أكاديمية المفردات</a>
+    <div class="nav-group">الامتحانات الرسمية</div>
+    <a href="#/dele" data-r="dele"><span class="ic">D</span>أكاديمية DELE A2</a>
+    <a href="#/ccse" data-r="ccse"><span class="ic">★</span>الجنسية والثقافة — CCSE</a>
+    <a href="#/exams" data-r="exams"><span class="ic">✎</span>مركز الامتحانات</a>
+    <div class="nav-group">التطبيق العملي</div>
+    <a href="#/speak" data-r="speak"><span class="ic">◉</span>استوديو المحادثة</a>
+    <a href="#/adventures" data-r="adventures"><span class="ic">➤</span>مغامرات في إسبانيا</a>
+    <div class="nav-group">متابعتي</div>
+    <a href="#/mistakes" data-r="mistakes"><span class="ic">!</span>دفتر أخطائي<span class="badge hidden" id="mistakeBadge"></span></a>
+    <a href="#/progress" data-r="progress"><span class="ic">◷</span>تقدّمي والنسخ الاحتياطي</a>
+  </nav>
+  <div class="side-foot" id="sideFoot">يُحفظ تقدّمك تلقائيًا على هذا الجهاز.</div>
+</aside>
+<div class="scrim" id="scrim"></div>
+<div class="main">
+  <header class="topbar">
+    <button class="menu-btn" id="menuBtn" type="button" aria-controls="sidebar" aria-label="فتح القائمة">☰ القائمة</button>
+    <div class="crumbs" id="crumbs"></div>
+    <div class="save-ind" id="saveInd" title="حالة الحفظ"><span class="dot"></span><span class="txt" id="saveTxt">جاهز</span></div>
+  </header>
+  <main class="content" id="main" tabindex="-1">
+    <div class="loading" id="boot">جارٍ تحميل الأكاديمية…</div>
+  </main>
+</div>
+<noscript><div style="padding:30px;text-align:center">يحتاج التطبيق إلى تفعيل JavaScript في المتصفح.</div></noscript>
+<script>
+/* Show a friendly message instead of a blank screen if anything fails to load. */
+window.ECM_ERRORS = [];
+window.onerror = function (msg, src, line) {
+  window.ECM_ERRORS.push(msg + ' @' + (src || '').split('/').pop() + ':' + line);
+  var m = document.getElementById('main');
+  if (m && (!window.ECM || !window.ECM.app || !window.ECM.app.started)) {
+    m.innerHTML = '<div class="card warn"><h2>تعذّر تشغيل التطبيق</h2><p>حدث خطأ أثناء التحميل. جرّب تحديث الصفحة (⌘R). تقدّمك محفوظ ولن يضيع.</p><p class="small muted" dir="ltr">' + String(msg).replace(/</g, '&lt;') + '</p></div>';
+  }
+};
+</script>
+<script src="js/core/util.js?v=20261105"></script>
+<script src="js/core/store.js?v=20261105"></script>
+<script src="js/core/speech.js?v=20261105"></script>
+<script src="js/core/conjugate.js?v=20261105"></script>
+<script src="js/core/ui.js?v=20261105"></script>
+<script src="js/data/photos.js?v=20261105"></script>
+<script src="js/data/grammar-a1.js?v=20261105"></script>
+<script src="js/data/grammar-a2.js?v=20261105"></script>
+<script src="js/data/grammar-b1.js?v=20261105"></script>
+<script src="js/data/grammar-b2.js?v=20261105"></script>
+<script src="js/data/skills.js?v=20261105"></script>
+<script src="js/data/vocab.js?v=20261105"></script>
+<script src="js/data/bank.js?v=20261105"></script>
+<script src="js/data/ccse.js?v=20261105"></script>
+<script src="js/data/dele.js?v=20261105"></script>
+<script src="js/data/adventures.js?v=20261105"></script>
+<script src="js/data/speaking.js?v=20261105"></script>
+<script src="js/views/home.js?v=20261105"></script>
+<script src="js/views/learn.js?v=20261105"></script>
+<script src="js/views/lab.js?v=20261105"></script>
+<script src="js/views/vocab.js?v=20261105"></script>
+<script src="js/views/exams.js?v=20261105"></script>
+<script src="js/views/ccse.js?v=20261105"></script>
+<script src="js/views/dele.js?v=20261105"></script>
+<script src="js/views/speak.js?v=20261105"></script>
+<script src="js/views/adventures.js?v=20261105"></script>
+<script src="js/views/mistakes.js?v=20261105"></script>
+<script src="js/views/progress.js?v=20261105"></script>
+<script src="js/core/app.js?v=20261105"></script>
+</body>
+</html>
