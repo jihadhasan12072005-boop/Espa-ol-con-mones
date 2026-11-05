@@ -1,0 +1,24 @@
+{
+  "name": "espanol-con-mones",
+  "version": "1.0.0",
+  "description": "Español con Mones — Spanish academy (A1–B2, DELE A2, CCSE) for Arabic speakers",
+  "scripts": {
+    "check": "node scripts/check.js",
+    "test": "node scripts/check.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jihadhasan12072005-boop/Espa-ol-con-mones.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jihadhasan12072005-boop/Espa-ol-con-mones/issues"
+  },
+  "homepage": "https://github.com/jihadhasan12072005-boop/Espa-ol-con-mones#readme",
+  "devDependencies": {
+    "acorn": "^8.19.0"
+  },
+  "private": true
+}
