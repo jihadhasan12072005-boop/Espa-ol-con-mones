@@ -42,6 +42,26 @@ SUBJECTS = [
     ("retiro", "Parque del Retiro estanque Madrid"),
     ("segovia", "Acueducto de Segovia"),
 ]
+SUBJECTS2 = [
+    ("senado", "Palacio del Senado Madrid fachada", "jpeg"),
+    ("supremo", "Palacio de las Salesas Reales Tribunal Supremo Madrid", "jpeg"),
+    ("moncloa", "Palacio de la Moncloa", "jpeg"),
+    ("prado", "Museo del Prado fachada Velázquez", "jpeg"),
+    ("teide", "Teide Tenerife", "jpeg"),
+    ("donana", "Parque Nacional de Doñana", "jpeg"),
+    ("altamira", "Cueva de Altamira bisonte", "jpeg"),
+    ("escorial", "Monasterio de El Escorial", "jpeg"),
+    ("fallas", "Fallas Valencia falla", "jpeg"),
+    ("flamenco", "flamenco baile Sevilla", "jpeg"),
+    ("santiago", "Catedral de Santiago de Compostela Obradoiro", "jpeg"),
+    ("merida", "Teatro romano de Mérida", "jpeg"),
+    ("sagrada", "Sagrada Familia exterior fachada", "jpeg"),
+    ("mapa_ccaa", "Autonomous communities of Spain map", "drawing"),
+    ("mapa_prov", "Provinces of Spain map", "drawing"),
+    ("mapa_rios", "Rivers of Spain map", "drawing"),
+    ("bandera", "Flag of Spain", "drawing"),
+    ("escudo", "Coat of Arms of Spain", "drawing"),
+]
 ALLOWED = ("cc0", "cc by", "cc-by", "public domain", "pd")
 
 
@@ -63,9 +83,10 @@ def get(params):
             raise
 
 
-def search(q, extra):
+def search(q, extra, kind="jpeg"):
+    flt = " filemime:image/jpeg filew:>1500 " if kind == "jpeg" else " filetype:drawing "
     d = get({"action": "query", "list": "search", "srnamespace": 6, "srlimit": 15,
-             "srsearch": q + " filemime:image/jpeg filew:>1500 " + extra})
+             "srsearch": q + flt + extra})
     return [x["title"] for x in d.get("query", {}).get("search", [])]
 
 
@@ -95,9 +116,10 @@ def strip_html(s):
     return " ".join(s.split())[:120]
 
 
-def ok(c):
+def ok(c, kind="jpeg"):
     l = c["license"].lower()
-    return c["thumb"] and c["w"] > c["h"] * 1.2 and any(l.startswith(a) for a in ALLOWED) and "nc" not in l.split()
+    shape = c["w"] > c["h"] * 1.2 if kind == "jpeg" else True
+    return c["thumb"] and shape and any(l.startswith(a) for a in ALLOWED) and "nc" not in l.split()
 
 
 def download(url, path):
@@ -113,7 +135,11 @@ def download(url, path):
             if e.code == 429 and attempt < 3:
                 time.sleep(30 * (attempt + 1)); continue
             raise
-    im = Image.open(io.BytesIO(data)).convert("RGB")
+    im = Image.open(io.BytesIO(data))
+    if im.mode in ("RGBA", "LA", "P"):
+        im = im.convert("RGBA"); bg = Image.new("RGB", im.size, "white"); bg.paste(im, mask=im.split()[-1]); im = bg
+    else:
+        im = im.convert("RGB")
     if im.width > 1280:
         im = im.resize((1280, round(im.height * 1280 / im.width)), Image.LANCZOS)
     im.save(path, "JPEG", quality=80, optimize=True, progressive=True)
@@ -124,18 +150,19 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     cpath = os.path.join(OUT, "credits.json")
     credits = json.load(open(cpath, encoding="utf-8")) if os.path.exists(cpath) else {}
-    for key, q in SUBJECTS:
+    subjects = [(k, q, "jpeg") for k, q in SUBJECTS] if os.environ.get("BATCH") != "2" else SUBJECTS2
+    for key, q, kind in subjects:
         if key in credits:
             continue
         picked = []
-        for extra in ("incategory:Quality_images", ""):
+        for extra in (("incategory:Quality_images", "") if kind == "jpeg" else ("",)):
             try:
-                titles = search(q, extra)
+                titles = search(q, extra, kind)
                 time.sleep(0.5)
                 if not titles:
                     continue
                 for c in info(titles[:10]):
-                    if ok(c) and c["title"] not in [p["title"] for p in picked]:
+                    if ok(c, kind) and c["title"] not in [p["title"] for p in picked]:
                         picked.append(c)
                         break
             except Exception as e:  # noqa
