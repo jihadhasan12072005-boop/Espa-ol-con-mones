@@ -492,3 +492,5 @@ label.lbl { display: block; font-weight: 700; margin-bottom: 6px; color: #0E2240
   .vt td.p { white-space: normal; }
 }
 .card.navy .es-inline, .hero .es-inline { color: #E9C987; }
+.es-def { direction: ltr; text-align: left; font-size: 18px; line-height: 1.7; background: #F4F7FB; border-left: 4px solid #0E2240; border-radius: 10px; padding: 12px 16px; margin-bottom: 12px; color: #0E2240; }
+.mistake-pair.fixed { opacity: .7; }

@@ -129,36 +129,55 @@
     var sec = [];
     function S(key, title, body) { sec.push({ k: key, t: title }); return '<section id="s-' + key + '"><h3>' + title + '</h3>' + body + '</section>'; }
 
+    var X = (ECM.GRAMMAR_EXTRA || {})[l.id] || {}, VL = ECM.verbLab, VB = ECM.verbs, br = VL && VL.bidi ? VL.bidi : rich;
+    var TMAP = { presente: 'presente', indefinido: 'indefinido', imperfecto: 'imperfecto', perfecto: 'perfecto', pluscuamperfecto: 'pluscuamperfecto', futuro: 'futuro',
+      condicional: 'condicional', subjuntivo: 'subjPresente', subjImperfecto: 'subjImperfectoRa', imperativo: 'imperativo', imperativoNeg: 'imperativoNeg' };
+    var lessonTenses = [], lessonVerbs = [];
+    U.each(l.tables || [], function (t) {
+      if (!t.v) return;
+      var k = TMAP[t.t]; if (k && lessonTenses.indexOf(k) < 0) lessonTenses.push(k);
+      if (lessonVerbs.indexOf(t.v + '|' + (k || 'presente')) < 0) lessonVerbs.push(t.v + '|' + (k || 'presente'));
+    });
     var body = '';
-    body += S('meaning', '١. معنى القاعدة', '<p>' + rich(l.meaning) + '</p>');
-    body += S('when', '٢. متى نستخدمها؟', '<ul>' + U.map(l.when, function (w) { return '<li>' + rich(w) + '</li>'; }).join('') + '</ul>');
-    body += S('why', '٣. لماذا؟ منطق القاعدة', '<div class="rule navy">' + rich(l.why) + '</div>');
+    body += S('meaning', '١. الشرح بالعربية', '<p>' + br(l.meaning) + '</p>');
+    if (X.def) body += S('def', '٢. التعريف بالإسبانية والمصطلحات', '<div class="es-def" lang="es" dir="ltr">' + esc(X.def) + ' ' + U.say(X.def, '', 'sm') + '</div>' +
+      (X.terms ? ui.table(['Término (المصطلح)', 'بالعربية'], U.map(X.terms, function (t) { return [t[0], t[1]]; }), [0]) : ''));
+    body += S('when', '٣. متى ولماذا نستخدمها؟', '<ul>' + U.map(l.when, function (w) { return '<li>' + br(w) + '</li>'; }).join('') + '</ul>' + '<div class="rule navy mt8"><b>لماذا؟ منطق القاعدة</b><br>' + br(l.why) + '</div>');
     body += S('steps', '٤. خطوات البناء', (l.formula ? '<div class="formula" lang="es">' + esc(l.formula).replace(/ \+ /g, ' <span class="plus">+</span> ') + '</div>' : '') +
-      '<ol class="steps">' + U.map(l.steps, function (s) { return '<li>' + rich(s) + '</li>'; }).join('') + '</ol>');
-    if (l.tables && l.tables.length) {
-      var conj = '', other = '';
-      U.each(l.tables, function (t) {
-        if (t.v) conj += ui.conjTable(t.v, t.t, { title: t.title || t.v, sub: t.sub });
-        else other += ui.table(t.head, t.rows, t.es);
-      });
-      body += S('tables', '٥. الجداول والتصريف', (conj ? '<p class="small muted">الصيغ <span style="color:#B4423A;font-weight:700">بالأحمر</span> شاذة (تختلف عن النمط المنتظم). اضغط ▶ للاستماع.</p><div class="conj-grid">' + conj + '</div>' : '') + other);
-    }
+      '<ol class="steps">' + U.map(l.steps, function (s) { return '<li>' + br(s) + '</li>'; }).join('') + '</ol>');
+    var conj = '', other = '', model = '';
+    U.each(l.tables || [], function (t) {
+      if (t.v) conj += ui.conjTable(t.v, t.t, { title: t.title || t.v, sub: t.sub });
+      else other += ui.table(t.head, t.rows, t.es);
+    });
+    if (VL && lessonTenses.length) U.each(lessonTenses.slice(0, 2), function (k) { model += '<h4 class="mt16">' + esc(VB.TENSES[k].es) + ' — ' + esc(VB.TENSES[k].ar) + '</h4>' + VL.modelTable(k); });
+    body += S('tables', '٥. جداول التصريف والمقارنة', model + (conj ? '<p class="small muted mt16">الصيغ <span style="color:#B4423A;font-weight:700">بالأحمر</span> شاذة (تختلف عن النمط المنتظم). اضغط ▶ للاستماع.</p><div class="conj-grid">' + conj + '</div>' : '') + other +
+      (!model && !conj && !other ? '<p class="muted">هذا الدرس لا يحتاج جدول تصريف؛ انظر الأمثلة والمقارنة أدناه.</p>' : ''));
+    var regBody = X.reg ? '<div class="rule">' + br(X.reg) + '</div>' : '';
+    if (VL && lessonVerbs.length) regBody += '<p class="mt8">أفعال هذا الدرس في مختبر الأفعال:</p><div class="flex wrap" style="gap:6px">' + U.map(lessonVerbs, function (x) {
+      var pz = x.split('|'), c = VB.known(pz[0]) ? VB.classify(pz[0]) : null;
+      return '<a class="vocab-chip" href="#/verbos/v/' + esc(pz[0]) + '/' + pz[1] + '"><b lang="es">' + esc(pz[0]) + '</b> ' + (c ? VL.clsTag(c) : '') + '</a>';
+    }).join('') + '</div>';
+    body += S('regular', '٦. المنتظم والشاذّ', regBody || '<p class="muted">—</p>');
     if (l.forms) {
       var f = l.forms, fh = '<div class="row">';
       U.each([['aff', 'الإثبات', 'green'], ['neg', 'النفي', ''], ['q', 'السؤال', 'navy']], function (x) {
         if (!f[x[0]]) return;
         fh += '<div class="c3"><div class="rule ' + x[2] + '" style="height:100%"><b>' + x[1] + '</b>' + ui.examples(f[x[0]]) + '</div></div>';
       });
-      body += S('forms', '٦. الإثبات والنفي والسؤال', fh + '</div>');
+      body += S('forms', '٧. الإثبات والنفي والسؤال', fh + '</div>');
     }
-    body += S('examples', '٧. أمثلة من الحياة (' + l.ex.length + ')', '<div class="flex wrap mb8"><button class="btn sm ghost" data-playall="1">▶ استمع إلى كل الأمثلة</button><span class="small muted" style="margin-right:10px">نصيحة: كرّر كل جملة بصوت عالٍ بعد سماعها.</span></div>' + ui.examples(l.ex));
-    if (l.err && l.err.length) body += S('errors', '٨. أخطاء شائعة وكيف تتجنّبها', U.map(l.err, function (e) {
-      return '<div class="mistake-pair"><span class="wrong" lang="es">✗ ' + esc(e[0]) + '</span><span class="right" lang="es">✓ ' + esc(e[1]) + '</span><div class="small mt8">' + rich(e[2]) + '</div></div>';
+    body += S('examples', '٨. أمثلة من الحياة (' + l.ex.length + ')', '<div class="flex wrap mb8"><button class="btn sm ghost" data-playall="1">▶ استمع إلى كل الأمثلة</button><span class="small muted" style="margin-right:10px">نصيحة: كرّر كل جملة بصوت عالٍ بعد سماعها.</span></div>' + ui.examples(l.ex));
+    if (l.err && l.err.length) body += S('errors', '٩. الأخطاء الشائعة والاستثناءات', U.map(l.err, function (e) {
+      return '<div class="mistake-pair"><span class="wrong" lang="es">✗ ' + esc(e[0]) + '</span><span class="right" lang="es">✓ ' + esc(e[1]) + '</span><div class="small mt8">' + br(e[2]) + '</div></div>';
     }).join(''));
-    if (l.cmp) body += S('compare', '٩. مقارنة: ' + esc(l.cmp.t), '<p>' + rich(l.cmp.x) + '</p>' + (l.cmp.rows ? ui.table(['الإسبانية', 'المعنى'], l.cmp.rows, [0]) : ''));
-    if (l.tip) body += '<div class="rule green mt16"><b>💡 نصيحة عملية</b><br>' + rich(l.tip) + '</div>';
-    body += S('practice', '١٠. التطبيق التفاعلي', '<p>' + (l.pr ? l.pr.length : 0) + ' أسئلة متدرّجة مع شرح عربي لكل إجابة. يكتمل الدرس عند إنهاء التطبيق.</p><div id="practice"><button class="btn lg" id="startPr">ابدأ التطبيق</button>' +
+    if (l.cmp) body += S('compare', '١٠. مقارنة بقاعدة مشابهة: ' + esc(l.cmp.t), '<p>' + br(l.cmp.x) + '</p>' + (l.cmp.rows ? ui.table(['الإسبانية', 'المعنى'], l.cmp.rows, [0]) : '') +
+      (l.tip ? '<div class="rule green mt16"><b>💡 نصيحة عملية</b><br>' + rich(l.tip) + '</div>' : ''));
+    body += S('practice', '١١. تمارين تفاعلية', '<p>' + (l.pr ? l.pr.length : 0) + ' أسئلة متدرّجة؛ بعد كل إجابة يظهر التصحيح والشرح بالعربية. يكتمل الدرس عند إنهاء التمارين.</p><div id="practice"><button class="btn lg" id="startPr">ابدأ التمارين</button>' +
       (rec.done ? ' <span class="tag">مكتمل · أفضل نتيجة ' + (rec.best || rec.score) + '%</span>' : '') + '</div>');
+    body += S('mywrong', '١٢. شرح إجاباتك الخاطئة', '<div id="myWrong">' + wrongAnswers(l) + '</div>');
+    body += S('final', '١٣. التقييم النهائي', X.fin ? '<p>' + X.fin.length + ' أسئلة جديدة بلا تصحيح فوري (مثل الامتحان)، ثم تقرير مفصّل. النجاح: 4 من 5.</p><div id="finalBox"><button class="btn lg gold" id="startFin">ابدأ التقييم النهائي</button>' +
+      (rec.finalBest !== undefined ? ' <span class="tag ' + (rec.finalBest >= 80 ? '' : 'red') + '">أفضل نتيجة ' + rec.finalBest + '%</span>' : '') + '</div>' : '<p class="muted">—</p>');
 
     var toc = '<div class="card" style="position:-webkit-sticky;position:sticky;top:76px"><span class="eyebrow">محتوى الدرس</span><ul class="list small">' +
       U.map(sec, function (s) { return '<li style="padding:6px 0"><a href="javascript:void(0)" data-scroll="s-' + s.k + '" style="text-decoration:none;color:#0E2240">' + s.t + '</a></li>'; }).join('') + '</ul>' +
@@ -174,6 +193,35 @@
     var pa = U.$('[data-playall]', el);
     if (pa) pa.onclick = function () { ECM.tts.speakLines(U.map(l.ex, function (x) { return { text: x.split('|')[0] }; })); };
     U.$('#startPr', el).onclick = function () { runPractice(l); };
+    var fb = U.$('#startFin', el); if (fb) fb.onclick = function () { runFinal(l); };
+  }
+
+  /* the learner's real wrong answers in this lesson (practice + final), with the correct answer and explanation */
+  function wrongAnswers(l) {
+    var ms = ECM.store.state.mistakes || {}, out = [];
+    for (var k in ms) if (ms.hasOwnProperty(k) && k.indexOf(l.id + '-') === 0) out.push(ms[k]);
+    if (!out.length) return '<p class="muted">لا توجد أخطاء مسجّلة في هذا الدرس بعد. حين تخطئ في التمارين أو التقييم النهائي تظهر هنا إجابتك، والإجابة الصحيحة، وسبب الخطأ — وتُحفظ أيضًا في «دفتر أخطائي» للمراجعة المتدرّجة.</p>';
+    out.sort(function (a, b) { return (b.lastAt || '') < (a.lastAt || '') ? -1 : 1; });
+    return U.map(out, function (m) {
+      var q = m.q || {}, right = q.type === 'type' ? [].concat(q.answer)[0] : (q.opts ? q.opts[q.answer] : '');
+      return '<div class="mistake-pair' + (m.fixed ? ' fixed' : '') + '"><div class="small muted">' + (m.fixed ? '✓ صُحّح بالمراجعة' : 'خطأ ' + m.count + ' مرة') + '</div><div lang="es" dir="ltr" class="es">' + esc(q.stem || '') + '</div>' +
+        '<span class="wrong" lang="es">✗ إجابتك: ' + esc((m.yours || [])[0] || '') + '</span><span class="right" lang="es">✓ ' + esc(right) + '</span><div class="small mt8">' + rich(q.why || '') + '</div></div>';
+    }).join('') + '<a class="btn sm mt8" href="#/mistakes">راجع في دفتر الأخطاء</a>';
+  }
+  function runFinal(l) {
+    var box = document.getElementById('finalBox'), X = ECM.GRAMMAR_EXTRA[l.id];
+    var qs = U.map(X.fin, function (q, i) { return { id: l.id + '-f' + i, type: 'mc', stem: q[0], stemLang: /[؀-ۿ]/.test(q[0]) ? 'ar' : 'es', noSay: true, opts: q[1], answer: q[2], why: q[3], topic: l.ta, level: l.lv, src: 'تقييم نهائي: ' + l.ta }; });
+    ui.quiz(box, qs, {
+      mode: 'exam', title: 'التقييم النهائي: ' + l.ta, passCount: 4,
+      onFinish: function (r) {
+        var rec = ECM.store.state.lessons[l.id] || {};
+        rec.finalBest = Math.max(rec.finalBest || 0, r.pct); rec.finalLast = r.pct; rec.finalAt = new Date().toISOString();
+        ECM.store.state.lessons[l.id] = rec; ECM.store.save();
+        var w = document.getElementById('myWrong'); if (w) w.innerHTML = wrongAnswers(l);
+      },
+      onRetry: function () { runFinal(l); }, onExit: function () { ECM.app.route(); }
+    });
+    box.scrollIntoView();
   }
 
   function runPractice(l) {
@@ -186,6 +234,7 @@
         rec.score = r.pct; rec.best = Math.max(rec.best || 0, r.pct); rec.attempts = (rec.attempts || 0) + 1; rec.last = new Date().toISOString();
         ECM.store.state.lessons[l.id] = rec;
         ECM.store.touch('lesson'); ECM.store.save(); ECM.achievements.check();
+        var w = document.getElementById('myWrong'); if (w) w.innerHTML = wrongAnswers(l);
         var nxt = course.lessonsOf(l.lv)[course.lessonsOf(l.lv).indexOf(l) + 1];
         box.insertAdjacentHTML('beforeend', '<div class="card emerald"><b>تم حفظ إنجازك ✓</b> ' + (r.pct < 70 ? 'ننصحك بمراجعة قسم «الأخطاء الشائعة» ثم إعادة التطبيق.' : 'أحسنت!') +
           (nxt ? ' <a class="btn sm" href="#/learn/' + nxt.lv + '/' + nxt.id + '">الدرس التالي ←</a>' : '') + '</div>');

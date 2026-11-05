@@ -27,7 +27,7 @@
   function bidi(s) {
     return rich(U.map(String(s || '').split(/(\[\[[\s\S]*?\]\])/), function (seg) {
       if (/^\[\[/.test(seg)) return seg;
-      return seg.replace(/\u200e/g, '').replace(/[A-Za-z\u00C0-\u017F\-][A-Za-z\u00C0-\u017F0-9 ,\-·→\/\.'+:]*[A-Za-z\u00C0-\u017F0-9]/g, function (m) { return '[[' + m + ']]'; });
+      return seg.replace(/\u200e/g, '').replace(/[(]?[A-Za-z\u00C0-\u017F\-\u2010-\u2013][A-Za-z\u00C0-\u017F0-9 ,\-\u2010-\u2013·→\/\.'+:()]*[A-Za-z\u00C0-\u017F0-9)]/g, function (m) { return '[[' + m + ']]'; });
     }).join(''));
   }
   function clsTag(c) { var x = CLS[c] || CLS.r; return '<span class="tag ' + x[1] + '">' + x[0] + '</span>'; }
@@ -174,6 +174,18 @@
     U.$('#vfav', el).onclick = function () { var on = toggleFav(lex); ui.toast(on ? 'أُضيف إلى المفضّلة' : 'أُزيل من المفضّلة'); verbPage(el, inf, tense || (mood === 'todo' ? 'todo' : null)); };
   }
 
+  /* Pronombre | hablar | comer | vivir — the three regular models side by side, endings highlighted */
+  function modelTable(k) {
+    var models = ['hablar', 'comer', 'vivir'], lab = personLabels(k), h;
+    h = '<div class="tbl-wrap"><table class="tbl model"><thead><tr><th>Pronombre</th>' + U.map(models, function (m) { return '<th lang="es">' + m + '</th>'; }).join('') + '</tr></thead><tbody>';
+    for (var p = 0; p < 6; p++) {
+      var fs = U.map(models, function (m) { return V.forms(m, k)[p]; });
+      if (!fs[0]) continue;
+      h += '<tr><td class="p" lang="es" dir="ltr">' + esc(lab[p]) + '</td>' + U.map(models, function (m, i) { return '<td class="f" lang="es" dir="ltr">' + formCell(m, k, p, fs[i], 0) + '</td>'; }).join('') + '</tr>';
+    }
+    return h + '</tbody></table></div><p class="small muted">الجزء الملوّن هو النهاية التي تُضاف إلى الجذر (habl- / com- / viv-)' + (V.TENSES[k].compound ? '؛ في الأزمنة المركّبة يتغيّر الفعل المساعد haber فقط.' : '.') + '</p>';
+  }
+
   /* ---------------------------------------------------------- tense guide */
   function tenses(el) {
     crumbs([{ t: 'دليل الأزمنة' }]);
@@ -191,15 +203,7 @@
     if (!T || !G) { ECM.app.go('#/verbos/tiempos'); return; }
     crumbs([{ t: 'دليل الأزمنة', href: '#/verbos/tiempos' }, { t: T.es }]);
     var h = '<div class="card navy"><span class="eyebrow">' + esc(T.level) + ' · ' + esc(V.MOODS[{ ind: 0, sub: 1, imp: 2 }[T.mood]].es) + '</span><h1 style="color:#fff" lang="es" dir="ltr">' + esc(T.es) + '</h1><p style="font-size:20px">' + esc(T.ar) + '</p><p>' + bidi(G.what) + '</p></div>';
-    // model table: Pronombre | hablar | comer | vivir with highlighted endings
-    var models = ['hablar', 'comer', 'vivir'], lab = personLabels(k), rows = [];
-    h += ui.secTitle('كيف نكوّنه؟') + '<div class="card"><p>' + bidi(G.form) + '</p><div class="tbl-wrap"><table class="tbl model"><thead><tr><th>Pronombre</th>' + U.map(models, function (m) { return '<th lang="es">' + m + '</th>'; }).join('') + '</tr></thead><tbody>';
-    for (var p = 0; p < 6; p++) {
-      var fs = U.map(models, function (m) { return V.forms(m, k)[p]; });
-      if (!fs[0]) continue;
-      h += '<tr><td class="p" lang="es" dir="ltr">' + esc(lab[p]) + '</td>' + U.map(models, function (m, i) { return '<td class="f" lang="es" dir="ltr">' + formCell(m, k, p, fs[i], 0) + '</td>'; }).join('') + '</tr>';
-    }
-    h += '</tbody></table></div><p class="small muted">الجزء الملوّن هو النهاية التي تُضاف إلى الجذر (habl- / com- / viv-).</p></div>';
+    h += ui.secTitle('كيف نكوّنه؟') + '<div class="card"><p>' + bidi(G.form) + '</p>' + modelTable(k) + '</div>';
     // irregular examples in this tense
     var irr = U.filter(['ser', 'estar', 'ir', 'tener', 'hacer', 'decir', 'poder', 'poner', 'venir', 'saber', 'querer', 'dar', 'ver', 'salir', 'pedir', 'dormir', 'pensar', 'conocer'], function (v) { var m = V.irregularMask(v, k); return m && (m[0] === 2 || m[2] === 2 || m[1] === 2 || m[5] === 2); }).slice(0, 6);
     if (irr.length) h += ui.secTitle('أفعال شاذّة مهمّة في هذا الزمن') + '<div class="vt-grid">' + U.map(irr, function (v) { return '<div><a href="#/verbos/v/' + v + '/' + k + '" class="small">' + v + ' ←</a>' + conjTable(v, k, { compact: true }) + '</div>'; }).join('') + '</div>' + LEGEND;
@@ -374,6 +378,8 @@
       return '<li><span class="es" lang="es" dir="ltr">' + esc(x[1]) + '</span> ' + U.say(x[1], '', 'sm') + '<br><span class="muted small">' + esc(x[2]) + '</span></li>';
     }).join('') + '</ul>';
   }
+
+  ECM.verbLab = { modelTable: modelTable, conjTable: conjTable, clsTag: clsTag, legend: LEGEND, bidi: bidi };
 
   /* ----------------------------------------------------------------- router */
   ECM.views.verbos = function (el, args) {

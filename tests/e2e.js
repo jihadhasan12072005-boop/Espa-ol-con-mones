@@ -197,11 +197,29 @@ function bad(name, detail) { results.push(['FAIL', name, detail || '']); console
     await ctx.close();
   }
 
+  // 10. grammar lesson: 13 parts, final assessment saved, wrong answers explained in part 12
+  {
+    const { ctx, p } = await page();
+    await p.goto(base + '#/learn/A2/a2-03'); await p.waitForTimeout(400);
+    const parts = await p.evaluate(() => document.querySelectorAll('.lesson-body section').length);
+    (parts === 13 ? ok : bad)('grammar lesson has 13 numbered parts', String(parts));
+    await p.click('#startFin'); await p.waitForTimeout(200);
+    for (let i = 0; i < 5; i++) { await p.click('[data-opt="0"]'); const n = await p.$('[data-act="next"]'); if (n) await n.click(); }
+    p.once('dialog', d => d.accept());
+    const sub = await p.$('[data-act="submit"]'); if (sub) await sub.click(); await p.waitForTimeout(400);
+    const st = await p.evaluate(() => { const s = JSON.parse(localStorage.getItem('ecm.v1')); return { best: s.lessons['a2-03'] && s.lessons['a2-03'].finalBest, m: Object.keys(s.mistakes).filter(k => k.indexOf('a2-03-f') === 0).length }; });
+    (st.best !== undefined ? ok : bad)('final assessment result saved', JSON.stringify(st));
+    const wr = await p.evaluate(() => document.getElementById('myWrong').innerText);
+    ((st.m === 0 || /إجابتك/.test(wr)) ? ok : bad)('part 12 lists the learner\'s wrong answers with explanation', 'mistakes ' + st.m);
+    if (p.errors.length) bad('lesson JS errors', p.errors.join(' | '));
+    await ctx.close();
+  }
+
   // 8. mobile layout (iPhone-sized) – no horizontal scroll
   {
     const { ctx, p } = await page({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
     let overflow = [];
-    for (const r of ['/', '/learn/A2/a2-01', '/exams/level/A2/1', '/ccse', '/adventures/cafe', '/progress', '/verbos', '/verbos/v/tener', '/verbos/v/levantarse/todo', '/verbos/tiempo/presente', '/verbos/comparar/ser-estar']) {
+    for (const r of ['/', '/learn/A2/a2-01', '/exams/level/A2/1', '/ccse', '/adventures/cafe', '/progress', '/verbos', '/verbos/v/tener', '/verbos/v/levantarse/todo', '/verbos/tiempo/presente', '/verbos/comparar/ser-estar', '/learn/B1/b1-01']) {
       await p.goto(base + '#' + r); await p.waitForTimeout(250);
       const w = await p.evaluate(() => document.documentElement.scrollWidth);
       if (w > 392) overflow.push(r + ':' + w);

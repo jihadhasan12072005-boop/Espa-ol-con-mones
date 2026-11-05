@@ -57,9 +57,11 @@ site/                     ← the deployed static app (no build step needed)
   img/photos[/thumb]      ← 25 Wikimedia Commons photos (credited in-app), optimised
   img/fallback            ← offline fallback images layered under each photo
   js/core/                ← util+polyfills, store, speech (TTS/STT), conjugator, UI/quiz, checker, app/router
-  js/data/                ← all learning content (grammar A1–B2, CCSE, DELE, bank, vocab, skills, adventures, speaking)
+  js/data/                ← all learning content (grammar A1–B2 + 13-part extras, culture academy, CCSE bank, DELE, vocab, skills,
+                             adventures, speaking, verb dataset verbs-db.js (generated), verb catalogue, tense guide, comparisons)
   js/views/               ← one file per section
-scripts/check.js          ← quality gate run by CI (ES5 parse, API/CSS scan, content + 300-model validation)
+scripts/check.js          ← quality gate run by CI (ES5 parse, API/CSS scan, content + 300-model + verb-table validation)
+scripts/build-verbs.js    ← rebuilds site/js/data/verbs-db.js from scripts/verbs/ (see scripts/verbs/README.md)
 tests/                    ← conjugation unit tests, Playwright e2e (local), screenshot helper
 .github/workflows/pages.yml  ← check → deploy (default branch) → verify live URL
 ```
@@ -83,6 +85,7 @@ node tests/shot.js out.png "/ccse" 1440 900   # screenshot a route
 ```
 
 ### Content honesty
-- CCSE questions (225) and DELE A2 simulations are **original practice material** on the official subject areas and exam structure. They are not official exam items.
+- Verb conjugations: Fred Jehle's Conjugated Spanish Verb Database (**CC BY-NC-SA 3.0**), normalised to the 2010 RAE spelling, 62 source errors corrected after review, plus 160 documented additions. The derived data keeps the same license.
+- CCSE questions (430, incl. lesson questions) and DELE A2 simulations are **original practice material** on the official subject areas and exam structure. They are not official exam items.
 - Writing/speaking feedback is rule-based (catches specific frequent errors). It is **not** equivalent to official examiner grading.
 - Listening uses the device’s text-to-speech voice, not studio recordings.

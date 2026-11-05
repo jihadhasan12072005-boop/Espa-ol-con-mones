@@ -80,6 +80,13 @@ G.forEach(function (l) {
   E.course.practiceQuestions(l).forEach(function (q) { checkQ(q, l.id); });
 });
 var lv = {}; G.forEach(function (l) { lv[l.lv] = (lv[l.lv] || 0) + 1; });
+G.forEach(function (l) {
+  var x = (E.GRAMMAR_EXTRA || {})[l.id];
+  if (!x) { fail(l.id + ': missing Spanish definition / final assessment (grammar-extra.js)'); return; }
+  if (!x.def || !x.reg || !x.terms || x.terms.length < 3) fail(l.id + ': needs def, reg and ≥3 terms');
+  if (!x.fin || x.fin.length < 5) fail(l.id + ': final assessment needs 5 questions');
+  (x.fin || []).forEach(function (q, i) { checkQ({ type: 'mc', stem: q[0], opts: q[1], answer: q[2], why: q[3] }, l.id + ' final q' + i); });
+});
 notes.push('grammar lessons: ' + JSON.stringify(lv) + ' total ' + G.length);
 E.SKILLS.forEach(function (s) {
   if (s.kind !== 'writing') (s.q || []).forEach(function (q, i) { if (q[1] !== 'tf' && !(q[2] >= 0 && q[2] < q[1].length)) fail(s.id + ' q' + i + ' answer'); });
