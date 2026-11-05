@@ -37,6 +37,7 @@
     };
   }
 
+  ECM.views = ECM.views || {};
   var U = ECM.util = {};
 
   U.esc = function (s) {
