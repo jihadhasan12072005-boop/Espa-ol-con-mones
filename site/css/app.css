@@ -495,3 +495,8 @@ label.lbl { display: block; font-weight: 700; margin-bottom: 6px; color: #0E2240
 .es-def { direction: ltr; text-align: left; font-size: 18px; line-height: 1.7; background: #F4F7FB; border-left: 4px solid #0E2240; border-radius: 10px; padding: 12px 16px; margin-bottom: 12px; color: #0E2240; }
 .mistake-pair.fixed { opacity: .7; }
 .gapx > * { margin: 0 0 8px 8px; }
+
+/* Older Safari (< 12): system Arabic font instead of the web font (see index.html) */
+html.old-safari body { font-family: 'Geeza Pro', 'Al Bayan', Tahoma, Arial, sans-serif; }
+html.old-safari .es, html.old-safari .es-inline { font-family: 'Helvetica Neue', Helvetica, 'Geeza Pro', Arial, sans-serif; }
+html.old-safari .timer { font-family: 'Helvetica Neue', Helvetica, monospace; }

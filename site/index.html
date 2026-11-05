@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<script>
+/* Safari before version 12 (older macOS) mis-measures Arabic text set in downloaded web fonts: words overlap and
+   spaces vanish. There we use the Mac's own Arabic font (Geeza Pro), which it renders correctly. */
+(function () {
+  var ua = navigator.userAgent || '', m = /Version\/(\d+)[\d.]* (Mobile\/\S+ )?Safari\//.exec(ua);
+  if (m && +m[1] < 12 && !/Chrome|CriOS|FxiOS|Edg/.test(ua)) document.documentElement.className += ' old-safari';
+})();
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
