@@ -20,7 +20,7 @@
       profile: { name: 'Mones', level: 'A1' },
       lessons: {}, vocab: {}, exams: [], mistakes: {}, adventures: {},
       speaking: { attempts: 0, history: [] }, achievements: {}, activity: {},
-      dele: {}, ccse: {}, settings: { rate: 0.9, voice: '' }, lastBackupAt: null, legacy: null
+      dele: {}, ccse: {}, qstats: {}, official: {}, culture: {}, verbs: { fav: [], recent: [], stats: {} }, settings: { rate: 0.9, voice: '' }, lastBackupAt: null, legacy: null
     };
   }
 

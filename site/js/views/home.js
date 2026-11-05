@@ -8,7 +8,7 @@
   R.ccse = function () {
     var s = ECM.store.state;
     var sims = U.filter(s.exams, function (e) { return e.kind === 'ccse'; }).slice(0, 5);
-    var practice = U.filter(s.exams, function (e) { return e.kind === 'ccse-topic'; }).slice(0, 10);
+    var practice = U.filter(s.exams, function (e) { return e.kind === 'ccse-topic' || e.kind === 'ccse-bank'; }).slice(0, 10);
     var simAvg = avg(U.map(sims, function (e) { return e.pct; }));
     var prAvg = avg(U.map(practice, function (e) { return e.pct; }));
     if (simAvg === null && prAvg === null) return { pct: 0, sims: 0, note: 'لم تُجرِ أي تدريب CCSE بعد.' };

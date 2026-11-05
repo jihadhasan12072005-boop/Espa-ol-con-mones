@@ -1,164 +1,103 @@
-/* CCSE — Spanish citizenship & culture: topics, revision, simulations, analysis. */
+/* CCSE examinations (citizenship) — 50 full simulations, analysis, own history.
+ * Completely separate from the language examinations. */
 (function (ECM) {
   'use strict';
-  var U = ECM.util, esc = U.esc, rich = U.rich, ui = ECM.ui;
+  var U = ECM.util, esc = U.esc, ui = ECM.ui;
+  function C() { return ECM.CCSE; }
+  var MIN = 45, NQ = 25, PASS = 15;
 
-  var C = function () { return ECM.CCSE; };
-  function topic(id) { return C().topics.find(function (t) { return t.id === id; }); }
-  function toQ(row, i) {
-    var t = topic(row[1]) || {};
-    return { id: 'ccse-' + i, type: row[3] ? 'mc' : 'tf', stem: row[2], stemLang: 'es', opts: row[3], answer: row[4], why: row[5],
-      topic: t.ar || 'CCSE', topicId: row[1], tarea: row[0], level: 'CCSE', src: 'CCSE · المهمة ' + row[0] };
-  }
-  function allQ() { return U.map(C().bank, toQ); }
-
-  /* Deterministic simulation n (1..50): per tarea, take a rotating window from a
-   * fixed shuffled order so consecutive models differ and the whole bank is covered. */
+  /* Simulation n (1..50): per tarea a rotating window over a fixed shuffled order of the
+   * whole bank, so consecutive models differ and all questions are used over the 50 models. */
   ECM.ccseSim = function (n) {
-    var Q = allQ(), out = [];
+    var out = [];
     U.each(C().tareas, function (T) {
-      var pool = U.filter(Q, function (q) { return q.tarea === T.n; });
-      var order = U.shuffle(pool, U.rng(1000 + T.n));
-      var start = ((n - 1) * T.q) % order.length;
+      var pool = U.filter(C().all, function (q) { return q.tarea === T.n; });
+      var total = (n - 1) * T.q, cycle = Math.floor(total / pool.length), start = total % pool.length;
+      var order = U.shuffle(pool, U.rng(1000 + T.n + cycle * 131));
       for (var k = 0; k < T.q; k++) out.push(order[(start + k) % order.length]);
     });
     return out;
   };
+  ECM.ccseLessonLink = function (q) { return q.lesson ? '#/cultura/' + q.lesson : null; };
 
-  function stats() {
-    var s = ECM.store.state, t = {};
-    U.each(s.exams, function (e) {
-      if (e.kind !== 'ccse' && e.kind !== 'ccse-topic') return;
-      for (var k in e.topics) { if (!t[k]) t[k] = { r: 0, t: 0 }; t[k].r += e.topics[k].r; t[k].t += e.topics[k].t; }
+  function ccseExams() { return U.filter(ECM.store.state.exams, function (e) { return e.kind === 'ccse' || e.kind === 'ccse-topic' || e.kind === 'ccse-bank'; }); }
+  ECM.ccseExams = ccseExams;
+
+  function lessonStats() {
+    var st = {}, qs = ECM.store.state.qstats;
+    U.each(C().all, function (q) {
+      var r = qs[q.id]; if (!r || !q.lesson) return;
+      var s = st[q.lesson] || (st[q.lesson] = { r: 0, w: 0, n: 0 });
+      s.r += r.r; s.w += r.w; s.n++;
     });
-    return t;
+    return st;
   }
+  ECM.ccseLessonStats = lessonStats;
 
   function overview(el) {
-    ECM.app.crumbs([{ t: 'الجنسية والثقافة — CCSE' }]);
+    ECM.app.crumbs([{ t: 'الجنسية', href: '#/ciudadania' }, { t: 'امتحانات الجنسية CCSE' }]);
     var X = C().exam, sims = U.filter(ECM.store.state.exams, function (e) { return e.kind === 'ccse'; });
     var passed = U.filter(sims, function (e) { return e.passed; }).length;
-    var h = ui.hero('congreso', 'CONOCIMIENTOS CONSTITUCIONALES Y SOCIOCULTURALES DE ESPAÑA', 'الجنسية والثقافة الإسبانية — CCSE',
-      'كل ما تحتاجه لامتحان الجنسية: الدستور والمؤسسات، الحقوق والواجبات، الجغرافيا، التاريخ والثقافة، والمجتمع الإسباني — بشرح عربي مفصّل وأسئلة تدريبية بالإسبانية كما في الامتحان.',
-      '<div class="btns flex wrap mt16"><a class="btn gold lg" href="#/ccse/sim">محاكاة امتحان كاملة</a><a class="btn light lg" href="#/ccse/analysis">تحليل نقاط الضعف</a></div>', 'hero');
-    h += '<div class="row mt24"><div class="c23"><div class="card"><span class="eyebrow">شكل الامتحان · CCSE ' + X.year + '</span><h3>كيف يبدو الامتحان؟</h3>' +
-      '<div class="row"><div class="c4"><div class="stat"><div class="v">' + X.questions + '</div><div class="l">سؤالًا</div></div></div><div class="c4"><div class="stat"><div class="v">' + X.minutes + '</div><div class="l">دقيقة</div></div></div>' +
-      '<div class="c4"><div class="stat"><div class="v">' + X.pass + '</div><div class="l">إجابة صحيحة للنجاح (60%)</div></div></div><div class="c4"><div class="stat"><div class="v">3 / V-F</div><div class="l">خيارات أو صحيح/خطأ</div></div></div></div>' +
-      ui.table(['المهمة (Tarea)', 'الموضوع', 'عدد الأسئلة'], U.map(C().tareas, function (T) { return ['Tarea ' + T.n, T.ar + ' — [[' + T.es + ']]', String(T.q)]; })) +
-      '<div class="notice blue">' + esc(X.note) + '</div>' +
-      '<div class="notice mt8"><b>شفافية:</b> جميع الأسئلة في هذا القسم (' + C().bank.length + ' سؤالًا) <b>أسئلة تدريبية أصلية</b> كُتبت لهذا التطبيق على موضوعات الدليل الرسمي، <b>وليست</b> أسئلة الامتحان الرسمية. ننصحك بتنزيل دليل الإعداد الرسمي المجاني من موقع معهد ثربانتس وحل أسئلته أيضًا.</div></div></div>' +
-      '<div class="c3"><div class="card navy"><span class="eyebrow">سجلّك في CCSE</span><h2>' + sims.length + ' محاكاة</h2><p class="muted">ناجحة: ' + passed + (sims[0] ? ' · آخر نتيجة: ' + sims[0].score + '/' + sims[0].total : '') + '</p>' +
-      ui.bar(sims.length ? U.pct(passed, sims.length) : 0, 'gold') + '<div class="btns flex wrap mt16"><a class="btn gold" href="#/ccse/sim">ابدأ محاكاة</a><a class="btn light" href="#/exams/ccse">النماذج الخمسون</a></div></div>' +
-      '<div class="card gold"><h3>طريقة الدراسة المقترحة</h3><ol class="mb0" style="padding-right:20px"><li>اقرأ كل موضوع بالعربية وراجع المصطلحات.</li><li>حلّ أسئلة الموضوع.</li><li>بعد إنهاء مهمة كاملة، أجرِ محاكاة.</li><li>راجع «تحليل نقاط الضعف» و«دفتر الأخطاء».</li></ol></div></div></div>';
-    U.each(C().tareas, function (T) {
-      var tops = U.filter(C().topics, function (t) { return t.tarea === T.n; });
-      var nq = U.filter(C().bank, function (b) { return b[0] === T.n; }).length;
-      h += ui.secTitle('<span class="lvl">Tarea ' + T.n + '</span> ' + esc(T.ar), '<span class="small muted">' + T.q + ' أسئلة في الامتحان · ' + nq + ' سؤالًا للتدريب</span>');
-      h += '<div class="row">' + U.map(tops, function (t) {
-        var done = ECM.store.state.ccse[t.id];
-        var nt = U.filter(C().bank, function (b) { return b[1] === t.id; }).length;
-        return '<div class="c3"><a class="tile" href="#/ccse/topic/' + t.id + '"><div class="body"><span class="tag ' + (done ? '' : 'grey') + '">' + (done ? 'تمت المراجعة · ' + done.best + '%' : 'لم يُدرس بعد') + '</span>' +
-          '<h3 class="mt8">' + esc(t.ar) + '</h3><p class="es" lang="es" dir="ltr">' + esc(t.es) + '</p><div class="meta">' + nt + ' سؤالًا تدريبيًا ←</div></div></a></div>';
-      }).join('') + '</div>';
-    });
-    el.innerHTML = h;
-  }
-
-  function topicPage(el, id) {
-    var t = topic(id);
-    if (!t) { overview(el); return; }
-    var T = C().tareas[t.tarea - 1];
-    ECM.app.crumbs([{ t: 'CCSE', href: '#/ccse' }, { t: 'Tarea ' + t.tarea }, { t: t.ar }]);
-    var qs = U.filter(allQ(), function (q) { return q.topicId === id; });
-    var h = ui.hero(T.photo, 'CCSE · TAREA ' + t.tarea + ' · ' + T.es.toUpperCase(), esc(t.ar), '<span class="es" lang="es" dir="ltr" style="color:#E9C987">' + esc(t.es) + '</span>');
-    h += '<div class="row mt24"><div class="c23"><div class="card lesson-body"><h3>الشرح</h3><p>' + rich(t.body) + '</p>' +
-      (t.table ? ui.table(t.table.head, t.table.rows, t.table.es) : '') +
-      '<h3>معلومات يجب حفظها</h3>' + ui.examples(t.facts) +
-      '<h3>المصطلحات الإسبانية الأساسية</h3><div class="tbl-wrap"><table class="tbl"><thead><tr><th>بالإسبانية</th><th>المعنى</th><th></th></tr></thead><tbody>' +
-      U.map(t.terms, function (x) { var p = x.split('|'); return '<tr><td class="es-cell" lang="es">' + esc(p[0]) + '</td><td>' + esc(p[1]) + '</td><td style="width:40px">' + U.say(p[0]) + '</td></tr>'; }).join('') + '</tbody></table></div></div></div>' +
-      '<div class="c3"><div class="card navy"><span class="eyebrow">تدريب الموضوع</span><h3>' + qs.length + ' سؤالًا</h3><p class="muted">أسئلة بالإسبانية بأسلوب الامتحان، مع شرح عربي لكل إجابة.</p><button class="btn gold" id="tq">ابدأ أسئلة الموضوع</button></div>' +
-      '<div class="card"><h3>مراجعة سريعة بالبطاقات</h3><p class="small muted">اضغط على البطاقة لرؤية المعنى.</p><div id="flash"></div></div></div></div><div id="topicQuiz" class="mt16"></div>';
-    el.innerHTML = h;
-    // flashcards
-    var fi = 0, shown = false, fbox = U.$('#flash', el);
-    function drawFlash() {
-      var p = t.terms[fi].split('|');
-      fbox.innerHTML = '<div class="flash" id="fc" style="min-height:150px;padding:22px 14px"><div class="w" style="font-size:24px" lang="es">' + esc(p[0]) + '</div>' + (shown ? '<div class="m" style="font-size:19px">' + esc(p[1]) + '</div>' : '<div class="ex">اضغط لإظهار المعنى</div>') + '</div>' +
-        '<div class="flex between mt8"><button class="btn ghost sm" id="fp">→</button><span class="small muted">' + (fi + 1) + ' / ' + t.terms.length + '</span><button class="btn ghost sm" id="fn">←</button></div>';
-      U.$('#fc', fbox).onclick = function () { shown = !shown; if (shown) ECM.tts.speak(p[0]); drawFlash(); };
-      U.$('#fn', fbox).onclick = function () { fi = (fi + 1) % t.terms.length; shown = false; drawFlash(); };
-      U.$('#fp', fbox).onclick = function () { fi = (fi - 1 + t.terms.length) % t.terms.length; shown = false; drawFlash(); };
-    }
-    drawFlash();
-    var start = function () {
-      ui.quiz(U.$('#topicQuiz', el), U.shuffle(qs), {
-        mode: 'practice', title: 'CCSE: ' + t.ar,
-        record: { kind: 'ccse-topic', ref: t.id, title: 'CCSE · ' + t.ar, level: 'CCSE' },
-        onFinish: function (r) {
-          var rec = ECM.store.state.ccse[t.id] || { best: 0 };
-          rec.best = Math.max(rec.best, r.pct); rec.last = new Date().toISOString(); rec.attempts = (rec.attempts || 0) + 1;
-          ECM.store.state.ccse[t.id] = rec; ECM.store.save();
-        },
-        onRetry: start
-      });
-      U.$('#topicQuiz', el).scrollIntoView();
-    };
-    U.$('#tq', el).onclick = start;
-  }
-
-  function simPicker(el) {
-    ECM.app.crumbs([{ t: 'CCSE', href: '#/ccse' }, { t: 'محاكاة الامتحان' }]);
-    var X = C().exam, s = ECM.store.state;
-    var taken = {}; U.each(s.exams, function (e) { if (e.kind === 'ccse') { var k = e.ref; if (!taken[k] || taken[k].pct < e.pct) taken[k] = e; } });
-    var nextN = 1; while (taken[nextN] && nextN < 50) nextN++;
-    var h = '<div class="card navy"><span class="eyebrow">SIMULACRO CCSE</span><h1 style="color:#fff">محاكاة امتحان CCSE</h1><p class="muted">' + X.questions + ' سؤالًا موزّعة على المهام الخمس كما في الامتحان (10 + 3 + 3 + 3 + 6)، ' + X.minutes +
-      ' دقيقة، النجاح بـ ' + X.pass + ' إجابة صحيحة. لا يظهر التصحيح إلا بعد التسليم، كما في الامتحان الحقيقي.</p><button class="btn gold lg" data-sim="' + nextN + '">ابدأ النموذج ' + nextN + '</button></div>';
-    h += '<div class="card"><h3>اختر نموذجًا (1–50)</h3><p class="small muted">كل نموذج ثابت (يمكنك إعادته لقياس تحسّنك)، ومجموعة النماذج تغطي بنك الأسئلة بالكامل بالتناوب. الأخضر: ناجح، الأحمر: لم ينجح بعد.</p><div class="qnav">';
+    var best = {}; U.each(sims, function (e) { if (!best[e.ref] || best[e.ref].score < e.score) best[e.ref] = e; });
+    var nextN = 1; while (best[nextN] && nextN < 50) nextN++;
+    var h = ui.hero('congreso', 'EXÁMENES CCSE · SIMULACROS', 'امتحانات الجنسية CCSE',
+      '50 محاكاة كاملة: 25 سؤالًا موزّعة على المهام الخمس (10 + 3 + 3 + 3 + 6)، 45 دقيقة، والنجاح بـ 15 إجابة صحيحة. التصحيح بالعربية بعد التسليم، مع رابط الدرس لكل خطأ.',
+      '<div class="btns flex wrap mt16"><a class="btn gold lg" href="#/ccse/sim/' + nextN + '">ابدأ النموذج ' + nextN + '</a><a class="btn light lg" href="#/ccse/analysis">تحليل نقاط الضعف</a></div>', 'hero');
+    h += '<div class="row mt24"><div class="c4"><div class="card stat"><div class="v">' + sims.length + '</div><div class="l">محاكاة منجزة</div></div></div><div class="c4"><div class="card stat"><div class="v">' + passed + '</div><div class="l">محاكاة ناجحة (15+)</div></div></div>' +
+      '<div class="c4"><div class="card stat"><div class="v">' + U.keys(best).length + ' / 50</div><div class="l">نموذج مختلف أُنجز</div></div></div><div class="c4"><div class="card stat"><div class="v">' + (sims[0] ? sims[0].score + '/25' : '—') + '</div><div class="l">آخر نتيجة</div></div></div></div>';
+    h += '<div class="card"><h3>النماذج الخمسون</h3><p class="small muted">الأخضر: ناجح، الأحمر: لم ينجح بعد. كل نموذج ثابت لتقيس تحسّنك عند إعادته، والنماذج معًا تستخدم كل أسئلة البنك (' + C().all.length + ' سؤالًا أصليًا).</p><div class="qnav">';
     for (var i = 1; i <= 50; i++) {
-      var e = taken[i];
-      h += '<button style="width:46px;height:40px" data-sim="' + i + '" class="' + (e ? (e.passed ? 'r' : 'w') : '') + '" title="' + (e ? e.score + '/25' : 'لم يُجرَ') + '">' + i + '</button>';
+      var e = best[i];
+      h += '<a href="#/ccse/sim/' + i + '" style="width:46px;height:40px;display:inline-block;text-align:center;line-height:38px;border-radius:9px;margin:0 0 6px 6px;font-weight:700;text-decoration:none;border:1px solid ' + (e ? (e.passed ? '#0E7C5A' : '#B4423A') : '#DCD2BD') + ';background:' + (e ? (e.passed ? '#E6F4EC' : '#FBEDEB') : '#FFFDF8') + ';color:#0E2240" title="' + (e ? e.score + '/25' : 'لم يُجرَ') + '">' + i + '</a>';
     }
-    h += '</div></div><div id="simBox"></div>';
+    h += '</div></div>';
+    h += '<div class="row"><div class="c2"><div class="card"><span class="eyebrow">شكل الامتحان</span><h3>ما الذي تعرفه عن الامتحان الحقيقي؟</h3>' +
+      ui.table(['Tarea', 'الموضوع', 'أسئلة في الامتحان', 'في الدليل الرسمي 2026'], U.map(C().tareas, function (T) { return [String(T.n), T.ar, String(T.q), String(C().official.perTarea[T.n])]; })) +
+      '<div class="notice blue">' + esc(X.note) + '</div></div></div><div class="c2"><div class="card"><h3>سجل امتحانات الجنسية</h3>' + historyTable(ccseExams().slice(0, 15)) + '</div></div></div>';
     el.innerHTML = h;
-    U.each(U.$$('[data-sim]', el), function (b) { b.onclick = function () { ECM.app.go('#/ccse/sim/' + b.getAttribute('data-sim')); }; });
   }
+
+  function historyTable(list) {
+    if (!list.length) return '<p class="muted">لا يوجد سجل بعد.</p>';
+    return '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>التاريخ</th><th>الامتحان</th><th>النتيجة</th></tr></thead><tbody>' +
+      U.map(list, function (e) { return '<tr><td class="small">' + U.date(e.date) + '</td><td>' + esc(e.title) + '</td><td><span class="tag ' + (e.passed === false || e.pct < 60 ? 'red' : '') + '">' + e.score + '/' + e.total + '</span></td></tr>'; }).join('') + '</tbody></table></div>';
+  }
+  ECM.historyTable = historyTable;
 
   ECM.runCcseSim = function (el, n, back) {
-    ECM.app.crumbs([{ t: 'CCSE', href: '#/ccse' }, { t: 'محاكاة', href: '#/ccse/sim' }, { t: 'النموذج ' + n }]);
-    var X = C().exam;
-    el.innerHTML = '<div class="notice blue mb16">النموذج ' + n + ' من 50 · ' + X.minutes + ' دقيقة · النجاح: ' + X.pass + ' من ' + X.questions + '. أسئلة تدريبية أصلية (ليست الأسئلة الرسمية).</div><div id="simQ"></div>';
+    ECM.app.crumbs([{ t: 'الجنسية', href: '#/ciudadania' }, { t: 'امتحانات CCSE', href: '#/ccse' }, { t: 'النموذج ' + n }]);
+    el.innerHTML = '<div class="notice blue mb16">النموذج ' + n + ' من 50 · ' + MIN + ' دقيقة · النجاح: ' + PASS + ' من ' + NQ + '. <b>أسئلة تدريبية أصلية</b> على موضوعات الدليل الرسمي، وليست أسئلة الدليل نفسها.</div><div id="simQ"></div>';
     ui.quiz(U.$('#simQ', el), ECM.ccseSim(n), {
-      mode: 'exam', title: 'CCSE · النموذج ' + n, timeLimit: X.minutes * 60, passCount: X.pass,
-      passNote: 'معيار النجاح هنا (15/25) هو معيار امتحان CCSE كما ورد في الدليل الرسمي. النتيجة تقدير للتدريب فقط.',
+      mode: 'exam', title: 'CCSE · النموذج ' + n, timeLimit: MIN * 60, passCount: PASS,
+      passNote: 'معيار النجاح 15 من 25 هو معيار امتحان CCSE. هذه نتيجة تدريبية.',
       record: { kind: 'ccse', ref: n, title: 'محاكاة CCSE · النموذج ' + n, level: 'CCSE' },
+      onAnswer: C().track, lessonLink: ECM.ccseLessonLink,
       onRetry: function () { ECM.runCcseSim(el, n, back); },
-      onExit: function () { ECM.app.go(back || '#/ccse/sim'); }
+      onExit: function () { ECM.app.go(back || '#/ccse'); }
     });
   };
 
   function analysis(el) {
-    ECM.app.crumbs([{ t: 'CCSE', href: '#/ccse' }, { t: 'تحليل نقاط الضعف' }]);
-    var st = stats(), keys = U.keys(st);
-    var h = '<div class="card navy"><span class="eyebrow">ANÁLISIS</span><h1 style="color:#fff">تحليل نقاط الضعف في CCSE</h1><p class="muted">مبني على كل إجاباتك في المحاكاة وتدريبات الموضوعات.</p></div>';
-    if (!keys.length) {
-      h += '<div class="card empty"><div class="big">◎</div><p>لا توجد بيانات بعد. ابدأ بتدريب موضوع أو محاكاة.</p><a class="btn" href="#/ccse/sim">ابدأ محاكاة</a></div>';
-    } else {
-      keys.sort(function (a, b) { return st[a].r / st[a].t - st[b].r / st[b].t; });
-      h += '<div class="card"><h3>الموضوعات من الأضعف إلى الأقوى</h3>';
+    ECM.app.crumbs([{ t: 'الجنسية', href: '#/ciudadania' }, { t: 'امتحانات CCSE', href: '#/ccse' }, { t: 'تحليل نقاط الضعف' }]);
+    var st = lessonStats(), keys = U.keys(st);
+    var h = '<div class="card navy"><span class="eyebrow">ANÁLISIS</span><h1 style="color:#fff">تحليل نقاط الضعف</h1><p class="muted">مبني على كل إجاباتك في المحاكاة وبنك الأسئلة، مجمّعة حسب دروس أكاديمية الثقافة.</p></div>';
+    if (!keys.length) h += '<div class="card empty"><div class="big">◎</div><p>لا توجد بيانات بعد.</p><a class="btn" href="#/ccse/sim/1">ابدأ أول محاكاة</a></div>';
+    else {
+      keys.sort(function (a, b) { return (st[a].r / (st[a].r + st[a].w)) - (st[b].r / (st[b].r + st[b].w)); });
+      h += '<div class="card"><h3>الدروس من الأضعف إلى الأقوى</h3>';
       U.each(keys, function (k) {
-        var p = U.pct(st[k].r, st[k].t), tp = C().topics.find(function (t) { return t.ar === k; });
-        h += '<div class="flex mb8"><div style="width:40%">' + (tp ? '<a href="#/ccse/topic/' + tp.id + '">' + esc(k) + '</a>' : esc(k)) + '</div><div class="grow">' + ui.bar(p, p < 60 ? 'gold' : '') + '</div><div style="width:110px;text-align:left" class="small">' + st[k].r + '/' + st[k].t + ' (' + p + '%)</div></div>';
+        var s = st[k], p = U.pct(s.r, s.r + s.w), l = C().lesson(k);
+        h += '<div class="flex wrap mb8"><div style="width:42%"><a href="#/cultura/' + k + '">' + esc(l ? l.ar : k) + '</a></div><div class="grow">' + ui.bar(p, p < 70 ? 'gold' : '') + '</div><div style="width:90px;text-align:left" class="small">' + p + '%</div>' +
+          (p < 70 ? '<a class="btn sm ghost" style="margin-right:8px" href="#/banco/leccion/' + k + '">تدرّب</a>' : '') + '</div>';
       });
-      var weak = U.filter(keys, function (k) { return st[k].r / st[k].t < 0.7; });
-      h += (weak.length ? '<div class="notice mt16">ركّز هذا الأسبوع على: <b>' + U.map(weak.slice(0, 3), esc).join('، ') + '</b>. اقرأ الشرح مرة أخرى ثم أعد أسئلة الموضوع.</div>' : '<div class="notice green mt16">ممتاز! كل موضوعاتك فوق 70%. استمر في المحاكاة الكاملة.</div>') + '</div>';
+      h += '</div>';
     }
     el.innerHTML = h;
   }
 
   ECM.views.ccse = function (el, args) {
-    if (args[0] === 'topic') topicPage(el, args[1]);
-    else if (args[0] === 'sim' && args[1]) ECM.runCcseSim(el, Math.max(1, Math.min(50, parseInt(args[1], 10) || 1)));
-    else if (args[0] === 'sim') simPicker(el);
+    if (args[0] === 'topic') { var l = U.filter(ECM.CULTURE, function (x) { return x.topics.indexOf(args[1]) !== -1; })[0]; ECM.app.go(l ? '#/cultura/' + l.id : '#/cultura'); return; }
+    if (args[0] === 'sim' && args[1]) ECM.runCcseSim(el, Math.max(1, Math.min(50, parseInt(args[1], 10) || 1)));
     else if (args[0] === 'analysis') analysis(el);
     else overview(el);
   };

@@ -47,6 +47,7 @@
       return;
     }
     setActive(r.name);
+    main.onclick = null;
     try {
       current = view(main, r.args) || {};
     } catch (e) {

@@ -7,6 +7,7 @@
 
   /* ---------------- photos ---------------- */
   ui.photoStyle = function (key, thumb) {
+    if (key === 'bandera') return 'background-color:#AA151B;background-image:linear-gradient(180deg,#AA151B 0%,#AA151B 25%,#F1BF00 25%,#F1BF00 75%,#AA151B 75%,#AA151B 100%);';
     var p = (ECM.photos && ECM.photos[key]) || (ECM.photos && ECM.photos._default) || {};
     var layers = [];
     if (p.file) layers.push('url(img/photos/' + (thumb ? 'thumb/' : '') + p.file + ')');
@@ -281,6 +282,7 @@
       checked[pos] = true;
       revealed[pos] = true;
       var ok = isCorrect(q, answers[pos]);
+      if (opt.onAnswer) { try { opt.onAnswer(q, ok); } catch (e) { /* ignore */ } }
       if (opt.review) M.review(q.id, ok);
       else if (!ok) M.record(q, givenText(q, answers[pos]));
       ECM.store.touch('q');
@@ -314,6 +316,7 @@
         var t = q.topic || 'عام';
         topics[t] = topics[t] || { r: 0, t: 0 }; topics[t].t++; if (ok) topics[t].r++;
         details.push({ q: q, ok: ok, given: answers[i] });
+        if (mode === 'exam' && opt.onAnswer) { try { opt.onAnswer(q, ok); } catch (e) { /* ignore */ } }
         if (mode === 'exam' && !opt.review) {
           if (!ok) M.record(q, givenText(q, answers[i]));
         }
@@ -421,7 +424,8 @@
         (q.audio && !q.audioLines ? '<div class="small muted">نص التسجيل: <span class="es-inline" lang="es" dir="ltr">' + esc(q.audio) + '</span></div>' : '') +
         (q.stem ? (q.stemLang === 'ar' ? '<div><b>' + rich(q.stem) + '</b></div>' : '<div class="es" lang="es" dir="ltr"><b>' + U.es(q.stem) + '</b></div>') : '') +
         '<span class="wrong">' + esc(given) + '</span><span class="right">' + esc(ans) + '</span>' +
-        (q.why ? '<div class="small mt8">' + rich(q.why) + '</div>' : '') + '</div>';
+        (q.why ? '<div class="small mt8">' + rich(q.why) + '</div>' : '') +
+        (opt.lessonLink && opt.lessonLink(q) ? '<a class="btn sm ghost mt8" href="' + opt.lessonLink(q) + '">📖 افتح الدرس المرتبط بهذا السؤال</a>' : '') + '</div>';
     }
     return h + '</div>';
   };
