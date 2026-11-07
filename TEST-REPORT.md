@@ -22,7 +22,16 @@ Date: 5 November 2026. Environment: Linux cloud container, Node 22, Chromium (Pl
 | DELE A2: 2 complete simulations (25 reading + 25 listening, 2 writing, 4 oral each) | ✅ |
 | Adventures: every step has a correct path, branches valid | ✅ 11 adventures |
 
-## Browser end-to-end tests (`node tests/e2e.js`, Chromium) — 30/30 PASSED
+## Arabic meaning of every verb — checked
+| Check | Result |
+|---|---|
+| Every conjugation table (lessons A1–B2, verb lab) shows the infinitive and its Arabic meaning above it, and two translated examples below it | ✅ (CI + e2e on 10 lessons A1–B2) |
+| Each grammar lesson has a dictionary of every verb it mentions (meaning + two examples) | ✅ 44 lessons |
+| Every important verb (all A1–A2 verbs and every verb in a lesson table, 270 verbs) has two example sentences with Arabic translation; every marked verb form is checked against the verified tables | ✅ 270/270 |
+| Each of the 44 lessons has a step-by-step teacher explanation in Syrian Arabic (what the rule means, how it works, why the conjugation changes, when to use it) | ✅ 44/44 |
+| Exercises and exam questions that name a verb in brackets show its Arabic meaning under the question | ✅ |
+
+## Browser end-to-end tests (`node tests/e2e.js`, Chromium) — 33/33 PASSED
 - All **91 routes** render with **no JavaScript errors** and **no blank screens** (incl. every verb-lab, citizenship and culture page, and an unknown route).
 - Refreshing a nested route keeps the page.
 - Full language exam (24 questions): answer, submit, report, history saved, wrong answers saved to the mistake notebook.

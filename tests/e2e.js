@@ -215,6 +215,28 @@ function bad(name, detail) { results.push(['FAIL', name, detail || '']); console
     await ctx.close();
   }
 
+  // 11. every verb shows its Arabic meaning: lesson tables, lesson verb dictionary, teacher explanation, exercises
+  {
+    const { ctx, p } = await page();
+    await p.goto(base + '#/learn/A1/a1-07'); await p.waitForTimeout(500);
+    const r = await p.evaluate(() => ({ teacher: !!document.querySelector('.teacher'), tables: document.querySelectorAll('.conj').length,
+      meanings: document.querySelectorAll('.conj .conj-mean').length, ex: document.querySelectorAll('.conj .conj-ex .vex').length,
+      dict: document.querySelectorAll('.vgloss-list details').length, tener: (document.querySelector('.conj-mean') || {}).innerText }));
+    (r.teacher && r.tables > 0 && r.meanings === r.tables && r.ex >= 2 * r.tables && r.dict >= 8 ? ok : bad)('lesson: teacher explanation, Arabic meaning above every table, two examples per verb, verb dictionary', JSON.stringify(r));
+    await p.goto(base + '#/verbos/practica/escribir?t=presente&lvl=A1'); await p.waitForTimeout(300);
+    const g = await p.evaluate(() => (document.querySelector('.q-gloss') || {}).innerText || '');
+    (/=/.test(g) ? ok : bad)('exercise shows the meaning of the verb in the question', g);
+    let missing = 0;
+    for (const id of ['a1-01', 'a1-06', 'a1-08', 'a2-01', 'a2-03', 'a2-05', 'a2-10', 'b1-01', 'b1-06', 'b2-01']) {
+      const lv = id.slice(0, 2).toUpperCase();
+      await p.goto(base + '#/learn/' + lv + '/' + id); await p.waitForTimeout(250);
+      missing += await p.evaluate(() => { let m = 0; document.querySelectorAll('.conj').forEach(c => { if (!c.querySelector('.conj-mean')) m++; }); return m + (document.querySelector('.teacher') ? 0 : 1); });
+    }
+    (missing === 0 ? ok : bad)('10 lessons A1–B2: no conjugation table without Arabic meaning, teacher explanation present', 'missing ' + missing);
+    if (p.errors.length) bad('JS errors', p.errors.join(' | '));
+    await ctx.close();
+  }
+
   // 8. mobile layout (iPhone-sized) – no horizontal scroll
   {
     const { ctx, p } = await page({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });

@@ -87,6 +87,11 @@ G.forEach(function (l) {
   if (!x.fin || x.fin.length < 5) fail(l.id + ': final assessment needs 5 questions');
   (x.fin || []).forEach(function (q, i) { checkQ({ type: 'mc', stem: q[0], opts: q[1], answer: q[2], why: q[3] }, l.id + ' final q' + i); });
 });
+G.forEach(function (l) {
+  var t = (E.GRAMMAR_TEACHER || {})[l.id];
+  if (!t) { fail(l.id + ': missing the Syrian-Arabic teacher explanation (grammar-teacher.js)'); return; }
+  ['what', 'how', 'why', 'when'].forEach(function (k) { if (!t[k] || t[k].length < 40) fail(l.id + ': teacher explanation needs «' + k + '»'); });
+});
 notes.push('grammar lessons: ' + JSON.stringify(lv) + ' total ' + G.length);
 E.SKILLS.forEach(function (s) {
   if (s.kind !== 'writing') (s.q || []).forEach(function (q, i) { if (q[1] !== 'tf' && !(q[2] >= 0 && q[2] < q[1].length)) fail(s.id + ' q' + i + ' answer'); });
@@ -188,6 +193,19 @@ notes.push('culture lessons: ' + CL.length + ' ' + JSON.stringify(areas));
     c.quiz.forEach(function (q) { if (!(q[2] >= 0 && q[2] < q[1].length) || !q[3]) fail('comparison ' + c.id + ' quiz ' + q[0]); });
   });
   notes.push('verb tense guide: ' + V.ORDER.length + ' tenses, ' + tx + ' checked examples; comparison lab: ' + E.VERB_COMPARE.length + ' lessons');
+  // second examples for important verbs
+  var ex2 = {}, n2 = 0;
+  (E.VERBEX2 || []).forEach(function (line) {
+    var f = line.split('|'), m = /\[\[([^\]:]+)(?::([a-zA-Z]+))?\]\]/.exec(f[1] || '');
+    if (f.length !== 3 || !m) { fail('verb example 2 format: ' + line); return; }
+    if (!E.VERBDB.v[V.lexOf(f[0])]) { fail('verb example 2: unknown verb ' + f[0]); return; }
+    var a = V.analyze(f[0], m[1], m[2]); if (!a.ok) fail('verb example 2 ' + f[0] + ' [[' + m[1] + ']]: ' + a.why); else n2++;
+    ex2[V.lexOf(f[0])] = 1;
+  });
+  var lessonVerbs = {};
+  E.GRAMMAR.forEach(function (l) { (l.tables || []).forEach(function (t) { if (t.v) lessonVerbs[V.lexOf(t.v)] = 1; }); });
+  cat.list.forEach(function (it) { if ((it.level === 'A1' || it.level === 'A2' || lessonVerbs[it.lex]) && !ex2[it.lex]) fail('important verb without a second example: ' + it.inf); });
+  notes.push('second examples for important verbs: ' + n2 + ' checked');
   var cls = { r: 0, o: 0, a: 0, i: 0 }; cat.list.forEach(function (it) { cls[it.cls]++; });
   notes.push('verb laboratory: ' + cat.list.length + ' verbs (' + cls.i + ' irregular, ' + (cls.o + cls.a) + ' spelling/accent changes, ' + cls.r + ' regular), ' + n + ' checked examples, ' + V.ORDER.length + ' tenses; dataset reproduced with ' + r.fixed.length + ' reviewed corrections');
 })();

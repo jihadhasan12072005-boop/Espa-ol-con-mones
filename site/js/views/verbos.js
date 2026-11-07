@@ -60,7 +60,9 @@
         '<td class="au">' + U.say((V.TENSES[t].mood === 'imp' ? '' : V.PERSONS[p].split(' ')[0] + ' ') + fs[p], '', 'sm') + '</td></tr>';
     }
     var T = V.TENSES[t];
-    return '<div class="vt' + (opt.compact ? ' compact' : '') + '"><div class="vt-h"><b lang="es" dir="ltr">' + esc(T.es) + '</b><span>' + esc(T.ar) + ' · ' + T.level + (T.archaic ? ' · <span class="tag amber">قديم</span>' : '') + '</span></div><table>' + rows + '</table></div>';
+    var mean = opt.noMeaning ? '' : V.meaningOf(inf);
+    return '<div class="vt' + (opt.compact ? ' compact' : '') + '"><div class="vt-h"><b lang="es" dir="ltr">' + esc(T.es) + '</b><span>' + esc(T.ar) + ' · ' + T.level + (T.archaic ? ' · <span class="tag amber">قديم</span>' : '') + '</span></div>' +
+      (mean ? '<div class="vt-mean"><b lang="es" dir="ltr">' + esc(inf) + '</b> = ' + esc(mean) + '</div>' : '') + '<table>' + rows + '</table></div>';
   }
   var LEGEND = '<div class="vt-legend small"><span><i class="lg-en"></i> النهاية المنتظمة</span><span><i class="lg-irr"></i> صيغة شاذّة</span><span><i class="lg-sp"></i> تغيير إملائي/نبرة فقط</span></div>';
 
@@ -144,7 +146,7 @@
       '<a class="btn light mt8" href="#/verbos/v/' + esc(inf) + '/practicar">تدرّب على هذا الفعل</a>' +
       (other ? '<a class="btn ghost-light mt8" href="#/verbos/v/' + esc(other) + '" lang="es">' + esc(other) + ' ←</a>' : '') + '</div></div></div>';
     // example + non-finite
-    h += '<div class="row mt16"><div class="c2"><div class="card"><h3>مثال من الحياة في إسبانيا</h3>' + (it.es ? '<p class="es big-es" lang="es" dir="ltr">' + exampleHtml(it.es) + ' ' + U.say(exampleText(it.es), '', 'sm') + '</p><p class="muted">' + esc(it.esAr) + '</p>' : '<p class="muted">—</p>') +
+    h += '<div class="row mt16"><div class="c2"><div class="card"><h3>أمثلة من الحياة في إسبانيا</h3>' + (V.examplesOf(inf).length ? U.map(V.examplesOf(inf), function (x) { return ui.verbExample(x); }).join('') : '<p class="muted">—</p>') +
       (refl ? '<div class="notice small">فعل انعكاسي: الضمير يتغيّر مع الشخص ([[me, te, se, nos, os, se]]) ويأتي قبل الفعل المصرّف، ويلتصق بالأمر والمصدر واسم الفاعل.</div>'.replace(/\[\[([^\]]+)\]\]/g, '<span class="es-inline" lang="es" dir="ltr">$1</span>') : '') +
       (lex === 'haber' ? '<div class="notice small">' + rich('يُستعمل haber اليوم فعلًا مساعدًا للأزمنة المركّبة ([[he comido]]) وبصيغة [[hay / había / habrá]] بمعنى «يوجد». صيغ الأمر [[he, habed]] قديمة ولا تُستعمل تقريبًا.') + '</div>' : '') +
       '</div></div><div class="c2"><div class="card"><h3>الصيغ غير الشخصية <small class="muted" lang="es">Formas no personales</small></h3>' +
@@ -158,7 +160,7 @@
     if (mood === 'todo') {
       h += LEGEND + U.map(V.MOODS, function (m) {
         return '<h3 class="mt16">' + esc(m.ar) + ' <small class="muted" lang="es">' + esc(m.es) + '</small></h3><div class="vt-grid">' +
-          U.map(U.filter(V.ORDER, function (k) { return V.TENSES[k].mood === m.id; }), function (k) { return conjTable(inf, k, { compact: true }); }).join('') + '</div>';
+          U.map(U.filter(V.ORDER, function (k) { return V.TENSES[k].mood === m.id; }), function (k) { return conjTable(inf, k, { compact: true, noMeaning: true }); }).join('') + '</div>';
       }).join('');
     } else {
       var tenses = U.filter(V.ORDER, function (k) { return V.TENSES[k].mood === mood; });

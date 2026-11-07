@@ -323,13 +323,37 @@
   }
   function exampleInfo(it) { if (!it.form) return null; var r = analyze(it.inf, it.form, it.annot); return r.ok ? r : null; }
 
+
+  /* Arabic meaning and examples of a verb, for every place that shows a verb (tables, lessons, exercises) */
+  var EX2 = null;
+  function ex2Index() {
+    if (EX2) return EX2;
+    EX2 = {};
+    var src = ECM.VERBEX2 || [];
+    for (var i = 0; i < src.length; i++) { var f = src[i].split('|'); EX2[lexOf(f[0])] = { es: f[1], ar: f[2] }; }
+    return EX2;
+  }
+  function meaningOf(inf) { var it = catalog().by[lexOf(String(inf || '').toLowerCase())]; return it ? it.ar : ''; }
+  function examplesOf(inf) {
+    var lex = lexOf(String(inf || '').toLowerCase()), it = catalog().by[lex], out = [];
+    if (it && it.es) out.push({ es: it.es, ar: it.esAr });
+    var e2 = ex2Index()[lex]; if (e2) out.push(e2);
+    return out;
+  }
+  /* infinitives named in a text, e.g. "yo ___ (tener)" or "(salir, tú)" */
+  function versInText(text) {
+    var re = /\(([a-záéíóúñü]+(?:ar|er|ir|ír)(?:se)?)(?=[,)\s])/gi, m, out = [], seen = {};
+    while ((m = re.exec(String(text || '')))) { var v = m[1].toLowerCase(); if (!seen[v] && meaningOf(v)) { seen[v] = 1; out.push(v); } }
+    return out;
+  }
+
   ECM.verbs = {
     TENSES: TENSES, ORDER: ORDER, MOODS: MOODS,
     PERSONS: ['yo', 'tú', 'él / ella / usted', 'nosotros / nosotras', 'vosotros / vosotras', 'ellos / ellas / ustedes'],
     PERSONS_AR: ['أنا', 'أنتَ / أنتِ', 'هو / هي / حضرتك', 'نحن', 'أنتم (إسبانيا)', 'هم / هنّ / حضراتكم'],
     IMP_PERSONS: [null, 'tú', 'usted', 'nosotros', 'vosotros', 'ustedes'],
     forms: forms, nonFinite: nonFinite, irregularMask: irregularMask, regularOf: regularOf, split: split, classify: classify,
-    CATS: CATS, catalog: catalog, analyze: analyze, exampleInfo: exampleInfo,
+    CATS: CATS, catalog: catalog, meaningOf: meaningOf, examplesOf: examplesOf, verbsInText: versInText, analyze: analyze, exampleInfo: exampleInfo,
     known: known, entry: entry, lexOf: lexOf, group: group, plain: plain, phon: phon,
     syllabify: syllabify, stressIndex: stressIndex, enclitic: enclitic,
     accentAt: function (word, si) { return writeAccent(syllabify(plain(word)), si); }

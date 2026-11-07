@@ -500,3 +500,20 @@ label.lbl { display: block; font-weight: 700; margin-bottom: 6px; color: #0E2240
 html.old-safari body { font-family: 'Geeza Pro', 'Al Bayan', Tahoma, Arial, sans-serif; }
 html.old-safari .es, html.old-safari .es-inline { font-family: 'Helvetica Neue', Helvetica, 'Geeza Pro', Arial, sans-serif; }
 html.old-safari .timer { font-family: 'Helvetica Neue', Helvetica, monospace; }
+/* Arabic meaning of verbs */
+.conj-mean { background: #FBF4E4; color: #5B3E05; padding: 6px 12px; font-size: 15px; border-bottom: 1px solid #EAD9B2; }
+.conj-ex { padding: 8px 12px; border-top: 1px solid #EFE7D6; background: #FFFDF8; }
+.vex { margin-bottom: 8px; line-height: 1.6; }
+.vex .es { font-size: 16px; }
+.q-gloss { background: #FBF4E4; border: 1px solid #EAD9B2; border-radius: 10px; padding: 6px 12px; margin: 8px 0; font-size: 15px; color: #5B3E05; }
+.q-gloss span { white-space: nowrap; }
+.vgloss-list details { border-bottom: 1px solid #EFE7D6; padding: 8px 0; }
+.vgloss-list summary { cursor: pointer; font-size: 16px; }
+.vgloss-list summary b { font-size: 17px; color: #0E2240; }
+.vt-mean { padding: 6px 14px; background: #FBF4E4; color: #5B3E05; font-size: 15px; }
+
+.teacher { background: #F2F7F4; border: 1px solid #CFE3D8; border-right: 5px solid #0B6447; border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; }
+.teacher-h { font-weight: 700; color: #0B6447; font-size: 17px; margin-bottom: 8px; }
+.teacher-step { margin-bottom: 10px; }
+.teacher-step b { color: #0E2240; }
+.teacher-step p { margin: 4px 0 0; line-height: 1.8; }

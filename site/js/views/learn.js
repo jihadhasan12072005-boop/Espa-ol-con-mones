@@ -139,7 +139,18 @@
       if (lessonVerbs.indexOf(t.v + '|' + (k || 'presente')) < 0) lessonVerbs.push(t.v + '|' + (k || 'presente'));
     });
     var body = '';
-    body += S('meaning', '١. الشرح بالعربية', '<p>' + br(l.meaning) + '</p>');
+    var TE = (ECM.GRAMMAR_TEACHER || {})[l.id];
+    var teacher = TE ? '<div class="teacher"><div class="teacher-h">🎓 الأستاذ بيشرحلك خطوة بخطوة</div>' +
+      U.map([['what', 'شو يعني هالقاعدة؟'], ['how', 'كيف بتشتغل؟'], ['why', 'ليش بيتغيّر التصريف؟'], ['when', 'إيمتى منستعملها؟']], function (x) {
+        return TE[x[0]] ? '<div class="teacher-step"><b>' + x[1] + '</b><p>' + br(TE[x[0]]) + '</p></div>' : '';
+      }).join('') + '</div>' : '';
+    var lv = lessonVerbList(l), dict = '';
+    if (lv.length && VB && VB.meaningOf) dict = '<div class="vgloss-list mt16"><h4>📖 قاموس أفعال هذا الدرس (' + lv.length + ')</h4><p class="small muted">اضغط على أي فعل لترى مثالين مع الترجمة.</p>' + U.map(lv, function (v) {
+      var exs = VB.examplesOf(v);
+      return '<details><summary><b lang="es" dir="ltr">' + esc(v) + '</b> = ' + esc(VB.meaningOf(v)) + ' ' + U.say(v, '', 'sm') + '</summary>' +
+        U.map(exs, function (x) { return ui.verbExample(x); }).join('') + '<a class="small" href="#/verbos/v/' + esc(v) + '">جدول تصريف ' + esc(v) + ' الكامل ←</a></details>';
+    }).join('') + '</div>';
+    body += S('meaning', '١. الشرح بالعربية', teacher + '<p>' + br(l.meaning) + '</p>' + dict);
     if (X.def) body += S('def', '٢. التعريف بالإسبانية والمصطلحات', '<div class="es-def" lang="es" dir="ltr">' + esc(X.def) + ' ' + U.say(X.def, '', 'sm') + '</div>' +
       (X.terms ? ui.table(['Término (المصطلح)', 'بالعربية'], U.map(X.terms, function (t) { return [t[0], t[1]]; }), [0]) : ''));
     body += S('when', '٣. متى ولماذا نستخدمها؟', '<ul>' + U.map(l.when, function (w) { return '<li>' + br(w) + '</li>'; }).join('') + '</ul>' + '<div class="rule navy mt8"><b>لماذا؟ منطق القاعدة</b><br>' + br(l.why) + '</div>');
@@ -194,6 +205,18 @@
     if (pa) pa.onclick = function () { ECM.tts.speakLines(U.map(l.ex, function (x) { return { text: x.split('|')[0] }; })); };
     U.$('#startPr', el).onclick = function () { runPractice(l); };
     var fb = U.$('#startFin', el); if (fb) fb.onclick = function () { runFinal(l); };
+  }
+
+  /* every Spanish verb a lesson mentions (its tables first), known to the verb dictionary */
+  function lessonVerbList(l) {
+    var VB = ECM.verbs, out = [], seen = {};
+    if (!VB || !VB.meaningOf) return out;
+    function add(v) { v = String(v).toLowerCase(); if (!seen[v] && v !== 'regular' && VB.meaningOf(v)) { seen[v] = 1; out.push(v); } }
+    U.each(l.tables || [], function (t) { if (t.v) add(t.v); });
+    var text = JSON.stringify([l.t, l.meaning, l.when, l.why, l.steps, l.formula, l.tables, l.forms, l.ex, l.err, l.cmp, l.tip]).replace(/a pesar/gi, '');
+    var re = /(^|[^a-záéíóúñü])([a-záéíóúñ]{2,}(?:ar|er|ir|ír)(?:se)?)(?![a-záéíóúñü])/gi, m;
+    while ((m = re.exec(text))) add(m[2]);
+    return out;
   }
 
   /* the learner's real wrong answers in this lesson (practice + final), with the correct answer and explanation */

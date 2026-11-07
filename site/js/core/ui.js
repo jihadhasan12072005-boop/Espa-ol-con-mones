@@ -72,7 +72,23 @@
         '</td><td style="width:34px">' + U.say((tense.indexOf('imperativo') === 0 ? '' : (C.PERSONS_SHORT[p] + ' ')) + forms[p], '', 'sm') + '</td></tr>';
     }
     var tn = C.TENSES[tense] ? C.TENSES[tense].es : tense;
-    return '<div class="conj"><h4>' + esc(opt.title || verb) + ' <small>' + esc(opt.sub || tn) + '</small></h4><table>' + rows + '</table></div>';
+    var V = ECM.verbs, mean = V && V.meaningOf ? V.meaningOf(verb) : (C.meaning ? C.meaning(verb.replace(/se$/, '')) : '');
+    var exs = opt.examples === false || !V || !V.examplesOf ? [] : V.examplesOf(verb);
+    return '<div class="conj"><h4><span lang="es" dir="ltr">' + esc(opt.title || verb) + '</span> <small>' + esc(opt.sub || tn) + '</small></h4>' +
+      (mean ? '<div class="conj-mean"><b lang="es" dir="ltr">' + esc(verb) + '</b> = ' + esc(mean) + '</div>' : '') + '<table>' + rows + '</table>' +
+      (exs.length ? '<div class="conj-ex">' + U.map(exs, function (x) { return ui.verbExample(x); }).join('') + '</div>' : '') + '</div>';
+  };
+  /* one example sentence: Spanish with the verb highlighted, audio, Arabic translation */
+  ui.verbExample = function (x) {
+    var plainEs = String(x.es).replace(/\[\[([^\]:=]+)(?:[:=][^\]]*)?\]\]/g, '$1');
+    return '<div class="vex"><span class="es" lang="es" dir="ltr">' + esc(x.es).replace(/\[\[([^\]:=]+)(?:[:=][^\]]*)?\]\]/g, '<mark class="hl">$1</mark>') + '</span> ' + U.say(plainEs, '', 'sm') +
+      '<div class="small muted">' + esc(x.ar) + '</div></div>';
+  };
+  /* "tener = يملك، لديه" line for every verb named in a question */
+  ui.verbGloss = function (text) {
+    var V = ECM.verbs; if (!V || !V.verbsInText) return '';
+    var vs = V.verbsInText(text); if (!vs.length) return '';
+    return '<div class="q-gloss">📖 ' + U.map(vs, function (v) { return '<span><b lang="es" dir="ltr">' + esc(v) + '</b> = ' + esc(V.meaningOf(v)) + '</span>'; }).join(' · ') + '</div>';
   };
   ui.table = function (head, rows, esCols) {
     esCols = esCols || [];
@@ -206,6 +222,7 @@
       if (q.stem) {
         if (q.stemLang === 'ar') h += '<div class="q-stem">' + rich(q.stem) + '</div>';
         else h += '<div class="q-stem es" lang="es" dir="ltr">' + U.es(q.stem) + (q.noSay ? '' : ' ' + U.say(q.stem.replace(/_{2,}/g, '…'))) + '</div>';
+        h += ui.verbGloss(q.stem);
       }
       return h;
     }

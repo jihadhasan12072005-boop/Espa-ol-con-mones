@@ -5,7 +5,7 @@
   'use strict';
   ECM.BANK = {
     A1: [
-      ['—¿De dónde eres? —___ de Marruecos.', ['Soy', 'Estoy', 'Tengo', 'Hay'], 0, 'الأصل والجنسية مع ser.', 'ser / estar'],
+      ['—¿De dónde eres? —___ de Siria.', ['Soy', 'Estoy', 'Tengo', 'Hay'], 0, 'الأصل والجنسية مع ser.', 'ser / estar'],
       ['Mi hermana ___ en Barcelona.', ['es', 'vive', 'tiene', 'hay'], 1, 'المعنى: «تعيش في» ← vive. (está en Barcelona صحيحة أيضًا لكنها ليست بين الخيارات بمعنى السكن).', 'الحاضر'],
       ['¿___ cuesta el billete de metro?', ['Cuántos', 'Cuánto', 'Qué', 'Cómo'], 1, 'السؤال عن السعر: ¿Cuánto cuesta?', 'الاستفهام'],
       ['En mi barrio ___ dos parques muy grandes.', ['están', 'son', 'hay', 'tienen'], 2, 'الإخبار بالوجود ← hay.', 'hay / está'],
