@@ -10,8 +10,8 @@
     if (key === 'bandera') return 'background-color:#AA151B;background-image:linear-gradient(180deg,#AA151B 0%,#AA151B 25%,#F1BF00 25%,#F1BF00 75%,#AA151B 75%,#AA151B 100%);';
     var p = (ECM.photos && ECM.photos[key]) || (ECM.photos && ECM.photos._default) || {};
     var layers = [];
-    if (p.file) layers.push('url(img/photos/' + (thumb ? 'thumb/' : '') + p.file + ')');
-    if (p.fb) layers.push('url(img/fallback/' + p.fb + '.jpg)');
+    if (p.file) layers.push('url(' + U.img('img/photos/' + (thumb ? 'thumb/' : '') + p.file) + ')');
+    if (p.fb) layers.push('url(' + U.img('img/fallback/' + p.fb + '.jpg') + ')');
     return layers.length ? 'background-image:' + layers.join(',') + ';' : '';
   };
   ui.photoCredit = function (key) {

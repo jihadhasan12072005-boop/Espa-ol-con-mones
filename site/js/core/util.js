@@ -40,6 +40,8 @@
   ECM.views = ECM.views || {};
   var U = ECM.util = {};
 
+  /* image path → embedded copy in the single-file build (window.ECM_IMG), otherwise the file itself */
+  U.img = function (path) { var m = window.ECM_IMG; return (m && (m[path] || m[path.replace('/thumb/', '/')])) || path; };
   U.esc = function (s) {
     return String(s === undefined || s === null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')

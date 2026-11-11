@@ -79,6 +79,7 @@ tests/                    ← conjugation unit tests, Playwright e2e (local), sc
 
 ### Commands (developer only — not needed by Mones)
 ```
+python3 scripts/build-single.py   # rebuild site/Espanol_con_Mones.html: the whole app in ONE file (like Deutsch mit Dina)
 npm ci && npm run check      # quality gate (same as CI)
 node tests/e2e.js            # browser tests (needs Playwright + Chromium)
 node tests/shot.js out.png "/ccse" 1440 900   # screenshot a route

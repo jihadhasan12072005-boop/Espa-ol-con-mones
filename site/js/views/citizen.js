@@ -88,7 +88,7 @@
     var body = '<section class="lsec"><h3><span class="sn">١</span> الشرح</h3><p>' + rich(l.intro) + '</p></section>';
     if (l.background) body += '<section class="lsec"><h3><span class="sn">٢</span> الخلفية التاريخية والمؤسسية</h3><div class="rule navy">' + rich(l.background) + '</div></section>';
     U.each(l.sections || [], function (s, i) { body += '<section class="lsec"><h3><span class="sn">' + (i + 3) + '</span> ' + esc(s.h) + '</h3><p>' + rich(s.b) + '</p></section>'; });
-    if (l.map) body += '<section class="lsec"><h3>🗺 الخريطة</h3><div class="map-box"><img src="img/photos/' + ECM.photos[l.map.photo].file + '" alt="خريطة" loading="lazy"></div><p class="small muted">' + esc(l.map.note) + ' — ' + esc(ECM.photos[l.map.photo].credit || '') + '</p></section>';
+    if (l.map) body += '<section class="lsec"><h3>🗺 الخريطة</h3><div class="map-box"><img src="' + ECM.util.img('img/photos/' + ECM.photos[l.map.photo].file) + '" alt="خريطة" loading="lazy"></div><p class="small muted">' + esc(l.map.note) + ' — ' + esc(ECM.photos[l.map.photo].credit || '') + '</p></section>';
     if (l.diagram) body += '<section class="lsec"><h3>📊 مخطط توضيحي</h3>' + ui.diagram(l.diagram) + '</section>';
     U.each(l.tables || [], function (t) { body += '<section class="lsec"><h3>📋 ' + esc(t.title) + '</h3>' + ui.table(t.head, t.rows, t.es) + '</section>'; });
     if (l.examples && l.examples.length) body += '<section class="lsec"><h3>🇪🇸 أمثلة من المجتمع الإسباني</h3>' + ui.examples(l.examples) + '</section>';
