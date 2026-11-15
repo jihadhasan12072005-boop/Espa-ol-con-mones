@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: ['claude/**']
-    paths: ['scripts/inspect_ccse_manual.py', 'scripts/fetch_photo_candidates.py']
+    paths: ['scripts/inspect_ccse_manual.py', 'scripts/fetch_photo_candidates.py', 'scripts/inspect_dele_guide.py']
 
 permissions:
   contents: write
@@ -21,6 +21,16 @@ jobs:
           python-version: '3.12'
       - run: pip install pypdf
       - run: python scripts/inspect_ccse_manual.py
+
+  dele-guide:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: pip install pypdf
+      - run: python scripts/inspect_dele_guide.py
 
   photos-batch2:
     runs-on: ubuntu-latest
