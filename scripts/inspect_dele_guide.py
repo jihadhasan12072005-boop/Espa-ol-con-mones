@@ -8,7 +8,6 @@ import io, re, sys, urllib.request
 UA = "Mozilla/5.0 (compatible; EspanolConMonesBuild/1.0; educational)"
 CANDIDATES = {
     "A1": [
-        "https://agenda.cervantes.es/sites/default/files/DELE_A1_v2020_Guia-de-examen.pdf",
         "https://examenes.cervantes.es/sites/default/files/DELE_A1_v2020_Guia-de-examen.pdf",
         "https://agenda.cervantes.es/sites/default/files/DELE_A1_v2020_Gu%C3%ADa%20de%20examen.pdf",
     ],
@@ -25,7 +24,7 @@ KEY = re.compile(r"minutos|ítems|items|tareas?\b|puntuaci|apto|grupo|palabras|p
 
 def get(url):
     req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=90) as r:
+    with urllib.request.urlopen(req, timeout=40) as r:
         return r.read()
 
 
@@ -42,6 +41,11 @@ def main():
                 print("NOT A PDF", level, url, len(data), "bytes"); continue
             pages = [(p.extract_text() or "") for p in PdfReader(io.BytesIO(data)).pages]
             print("\n==== %s  %s  (%d pages, %d bytes)" % (level, url, len(pages), len(data)))
+            if level == "ALL":  # short structure table: print it whole
+                for i, t in enumerate(pages):
+                    print("-- p%d full text --\n%s" % (i + 1, t[:6000]))
+                done = True
+                break
             budget = 14000
             for i, t in enumerate(pages):
                 lines = [re.sub(r"\s+", " ", l).strip() for l in t.split("\n")]
