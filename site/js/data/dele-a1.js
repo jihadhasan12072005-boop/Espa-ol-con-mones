@@ -12,9 +12,9 @@
     spec: {
       photo: 'plazamayor',
       intro: 'امتحان المستوى الأول من شهادات معهد ثربانتس. ليس كافيًا للجنسية (المطلوب A2)، لكنه خطوة أولى ممتازة: نفس شكل الامتحان ونفس طريقة التصحيح بمستوى أسهل. هنا تتعلّم شكله وتتدرّب على كل قسم وتجري محاكاة كاملة.',
-      simsNote: 'كل نموذج: 25 سؤال قراءة + 25 سؤال استماع + مهمتا كتابة (استمارة ونص قصير) + مهام المحادثة.',
+      simsNote: 'كل نموذج: 25 سؤال قراءة + 25 سؤال استماع + مهمتا كتابة (استمارة ونص قصير) + 4 مهام محادثة.',
       note: '',
-      honest: 'الأسئلة هنا **أصلية للتدريب** وليست أسئلة امتحان رسمية. في الامتحان الحقيقي تعتمد بعض المهام على **صور** (اختيار الصورة المناسبة)؛ هنا حوّلناها إلى خيارات مكتوبة. الاستماع بصوت الجهاز (TTS) لا بتسجيلات حقيقية. الكتابة والمحادثة يقيّمهما في الامتحان ممتحِنون معتمدون؛ التطبيق يقدّم مراجعة آلية مساعدة وتقييمًا ذاتيًا فقط.',
+      honest: 'الأسئلة هنا **أصلية للتدريب** وليست أسئلة امتحان رسمية. مدة كل قسم مأخوذة من جدول بنية امتحانات DELE (2020)؛ عدد المهام والأسئلة في كل قسم وفق شكل الامتحان كما نعرفه، فتأكّد من الدليل الرسمي على examenes.cervantes.es. في الامتحان الحقيقي تعتمد بعض المهام على **صور** (اختيار الصورة المناسبة)؛ هنا حوّلناها إلى خيارات مكتوبة. الاستماع بصوت الجهاز (TTS) لا بتسجيلات حقيقية. الكتابة والمحادثة يقيّمهما في الامتحان ممتحِنون معتمدون؛ التطبيق يقدّم مراجعة آلية مساعدة وتقييمًا ذاتيًا فقط.',
       oralNote: '',
       passNote: ''
     },
@@ -22,15 +22,15 @@
       { id: 'lectura', es: 'Comprensión de lectura', ar: 'فهم المقروء', min: 45, items: 25, tareas: 4, group: 1, photo: 'salamanca',
         desc: 'تقرأ نصوصًا قصيرة جدًا وبسيطة: رسالة شخصية، ملاحظات ولافتات، إعلانات، وبرنامج أو جدول، وتجيب عن 25 سؤالًا في 4 مهام.',
         tips: ['اقرأ السؤال أولًا ثم ابحث عن الجواب في النص: لا تحتاج أن تفهم كل كلمة.', 'انتبه للأيام والساعات والأسعار: أغلب الأسئلة عنها.', 'في مهمة الإعلانات اقرأ جملة الشخص وابحث عن **الكلمة المفتاحية** ([[trabajo, piso, medicamento…]]).', 'الكلمات الصغيرة تغيّر المعنى: [[no, solo, cerrado, gratis, incluido]].', 'أجب عن كل الأسئلة: لا خصم على الخطأ.'] },
-      { id: 'auditiva', es: 'Comprensión auditiva', ar: 'فهم المسموع', min: 25, items: 25, tareas: 4, group: 2, photo: 'metro',
+      { id: 'auditiva', es: 'Comprensión auditiva', ar: 'فهم المسموع', min: 20, items: 25, tareas: 4, group: 2, photo: 'metro',
         desc: 'تستمع إلى حوارات قصيرة جدًا، ورسائل وإعلانات، وشخص يتكلّم عن أشخاص آخرين، وحوار أطول قليلًا، وتجيب عن 25 سؤالًا.',
         tips: ['اقرأ الأسئلة والخيارات قبل أن يبدأ التسجيل.', 'ركّز على الأرقام: الساعة، السعر، العمر، رقم الهاتف.', 'في الاستماع الأول افهم الموضوع، وفي الثاني تأكّد من الجواب.', 'إذا غيّر المتكلّم رأيه ([[No, mejor el sábado]]) فالجواب هو آخر ما قاله.', 'في هذا التطبيق الصوت آلي (TTS) وأبطأ قليلًا من المتحدثين الحقيقيين.'] },
       { id: 'escrita', es: 'Expresión e interacción escritas', ar: 'التعبير والتفاعل الكتابي', min: 25, items: 2, tareas: 2, group: 1, photo: 'cafe',
         desc: 'مهمتان: الأولى ملء **استمارة** ببياناتك الشخصية مع جواب قصير، والثانية كتابة **نص قصير** (رسالة، بطاقة، ملاحظة) من 30 إلى 40 كلمة.',
         tips: ['في الاستمارة لا تترك أي خانة فارغة.', 'اكتب الجنسية كصفة: [[sirio / siria]]، والتاريخ هكذا: [[12/07/1965]].', 'في النص القصير غطِّ **كل** النقاط المطلوبة، كل نقطة بجملة.', 'ابدأ بتحية واختم بوداع: [[Hola, … / Un abrazo]].', 'جمل قصيرة صحيحة أفضل من جمل طويلة فيها أخطاء.'] },
-      { id: 'oral', es: 'Expresión e interacción orales', ar: 'التعبير والتفاعل الشفهي', min: 10, prep: 10, items: 3, tareas: 3, group: 2, photo: 'plazamayor',
-        desc: 'بعد وقت قصير للتحضير، تتكلّم مع الممتحِن: تقدّم نفسك، تتكلّم عن موضوع بسيط من حياتك، ثم تجيب عن أسئلته.',
-        tips: ['حضّر تقديم نفسك جيدًا واحفظه: الاسم، العمر، البلد، السكن، العمل، العائلة، اللغات.', 'في التحضير اكتب **كلمات** لا جملًا.', 'إذا لم تفهم السؤال: [[¿Puede repetir, por favor?]] أو [[Más despacio, por favor]].', 'أجب بجملة كاملة لا بكلمة واحدة: [[Vivo en Madrid con mi familia]].', 'تكلّم ببطء ووضوح؛ لا أحد ينتظر منك السرعة في A1.'] }
+      { id: 'oral', es: 'Expresión e interacción orales', ar: 'التعبير والتفاعل الشفهي', min: 10, prep: 10, items: 4, tareas: 4, group: 2, photo: 'plazamayor',
+        desc: 'بعد 10 دقائق تحضير، تتكلّم مع الممتحِن نحو 10 دقائق: تقدّم نفسك، تتكلّم عن موضوع بسيط من حياتك، تجيب عن أسئلته، ثم تمثّل حوارات قصيرة في مواقف يومية (في محل، عند شبّاك…).',
+        tips: ['في الحوارات اطلب بأدب: [[Quería…, por favor]] واسأل عن السعر: [[¿Cuánto cuesta?]]', 'حضّر تقديم نفسك جيدًا واحفظه: الاسم، العمر، البلد، السكن، العمل، العائلة، اللغات.', 'في التحضير اكتب **كلمات** لا جملًا.', 'إذا لم تفهم السؤال: [[¿Puede repetir, por favor?]] أو [[Más despacio, por favor]].', 'أجب بجملة كاملة لا بكلمة واحدة: [[Vivo en Madrid con mi familia]].', 'تكلّم ببطء ووضوح؛ لا أحد ينتظر منك السرعة في A1.'] }
     ],
     sims: [
       {
@@ -143,7 +143,11 @@
           { tarea: 3, title: 'Conversación con el entrevistador', task: 'El entrevistador le hace preguntas sobre su presentación y su día. Escuche cada pregunta y responda con una frase completa.',
             prompts: ['Responda con frases completas: «Los domingos me levanto a las…»', 'Si no entiende: «¿Puede repetir, por favor?»', 'Puede preguntar también: «¿Y usted?»'],
             questions: ['¿A qué hora se levanta los domingos?', '¿Con quién vive?', '¿Qué le gusta comer?', '¿Qué hace los fines de semana?', '¿Cuántas lenguas habla?'],
-            model: '—¿A qué hora se levanta los domingos? —Los domingos me levanto más tarde, a las nueve. —¿Con quién vive? —Vivo con mi mujer. —¿Qué le gusta comer? —Me gusta mucho el arroz con pollo y también la paella. —¿Qué hace los fines de semana? —Los sábados voy al mercado y los domingos visito a mis hijos. —¿Cuántas lenguas habla? —Hablo dos lenguas: árabe y un poco de español.' }
+            model: '—¿A qué hora se levanta los domingos? —Los domingos me levanto más tarde, a las nueve. —¿Con quién vive? —Vivo con mi mujer. —¿Qué le gusta comer? —Me gusta mucho el arroz con pollo y también la paella. —¿Qué hace los fines de semana? —Los sábados voy al mercado y los domingos visito a mis hijos. —¿Cuántas lenguas habla? —Hablo dos lenguas: árabe y un poco de español.' },
+          { tarea: 4, title: 'Diálogos en situaciones: en una cafetería y en una tienda', task: 'El entrevistador es el camarero y después el dependiente. Hable con él en estas dos situaciones.',
+            prompts: ['En la cafetería: salude, pida algo de beber y algo de comer, pregunte el precio y pague.', 'En la tienda: diga qué quiere comprar (una camiseta), pregunte por la talla y el color, pregunte el precio.', 'Use: «Quería…», «¿Tiene…?», «¿Cuánto cuesta?», «Gracias, adiós»'],
+            questions: ['Hola, buenos días. ¿Qué va a tomar?', '¿Algo más?', 'Hola, ¿qué desea?', '¿Qué talla usa?', '¿De qué color la quiere?'],
+            model: 'En la cafetería: —Hola, buenos días. ¿Qué va a tomar? —Buenos días. Quería un café con leche, por favor. —¿Algo más? —Sí, una tostada con tomate. ¿Cuánto es? —Tres euros. —Aquí tiene. Gracias, adiós.\nEn la tienda: —Hola, ¿qué desea? —Quería una camiseta. —¿Qué talla usa? —La talla L. —¿De qué color la quiere? —Azul, por favor. ¿Cuánto cuesta? —Quince euros. —Muy bien, me la llevo.' }
         ]
       },
       {
@@ -256,7 +260,11 @@
           { tarea: 3, title: 'Conversación con el entrevistador', task: 'El entrevistador le hace preguntas sobre su presentación y su familia. Escuche cada pregunta y responda con una frase completa.',
             prompts: ['Responda con frases completas: «Mi hija vive en…»', 'Si no entiende: «¿Puede repetir, por favor?»', 'Puede preguntar también: «¿Y usted?»'],
             questions: ['¿Cuántos hijos tiene?', '¿Dónde vive su familia?', '¿Cómo es su casa?', '¿Qué hace los domingos con su familia?', '¿Qué le gusta hacer en su tiempo libre?'],
-            model: '—¿Cuántos hijos tiene? —Tengo tres hijos. —¿Dónde vive su familia? —Mi mujer y yo vivimos en Madrid, y mis hermanos viven en Siria. —¿Cómo es su casa? —Mi casa es pequeña, pero tiene mucha luz. Tiene dos habitaciones. —¿Qué hace los domingos con su familia? —Los domingos comemos juntos y vemos una película. —¿Qué le gusta hacer en su tiempo libre? —Me gusta pasear y leer el periódico.' }
+            model: '—¿Cuántos hijos tiene? —Tengo tres hijos. —¿Dónde vive su familia? —Mi mujer y yo vivimos en Madrid, y mis hermanos viven en Siria. —¿Cómo es su casa? —Mi casa es pequeña, pero tiene mucha luz. Tiene dos habitaciones. —¿Qué hace los domingos con su familia? —Los domingos comemos juntos y vemos una película. —¿Qué le gusta hacer en su tiempo libre? —Me gusta pasear y leer el periódico.' },
+          { tarea: 4, title: 'Diálogos en situaciones: en el mercado y en la estación', task: 'El entrevistador es el vendedor y después el empleado de la estación. Hable con él en estas dos situaciones.',
+            prompts: ['En el mercado: salude, pida fruta (cantidad), pregunte el precio y pague.', 'En la estación: pida un billete, diga a qué ciudad y qué día, pregunte la hora de salida y el precio.', 'Use: «Quería…», «Un kilo de…», «¿A qué hora sale…?», «¿Cuánto es?»'],
+            questions: ['Buenos días, ¿qué le pongo?', '¿Algo más?', 'Hola, ¿adónde quiere ir?', '¿Para qué día?', '¿Ida o ida y vuelta?'],
+            model: 'En el mercado: —Buenos días, ¿qué le pongo? —Buenos días. Quería un kilo de naranjas, por favor. —¿Algo más? —Sí, medio kilo de tomates. ¿Cuánto es? —Tres euros con veinte. —Aquí tiene. Gracias.\nEn la estación: —Hola, ¿adónde quiere ir? —Quería un billete para Toledo. —¿Para qué día? —Para el sábado. ¿A qué hora sale el tren? —A las diez. —¿Ida o ida y vuelta? —Ida y vuelta, por favor. ¿Cuánto cuesta? —Veinte euros.' }
         ]
       }
     ]

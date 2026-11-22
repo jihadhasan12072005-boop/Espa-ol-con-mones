@@ -238,7 +238,7 @@ notes.push('DELE simulations: ' + E.DELE.sims.length + ' complete (25 reading + 
     });
     if (S.escrita.length !== 2) fail('DELE A1 ' + S.id + ' writing tasks');
     S.escrita.forEach(function (T) { if (!T.model || !T.check || !T.task) fail('DELE A1 ' + S.id + ' writing task incomplete'); });
-    if (S.oral.length < 3) fail('DELE A1 ' + S.id + ' oral tasks');
+    if (S.oral.length !== 4) fail('DELE A1 ' + S.id + ' oral tasks');
     S.oral.forEach(function (T) { if (!T.model || !T.prompts) fail('DELE A1 ' + S.id + ' oral task incomplete'); });
   });
   notes.push('DELE A1 simulations: ' + A.sims.length + ' complete (25 reading + 25 listening + 2 writing + ' + A.sims[0].oral.length + ' oral each)');

@@ -20,6 +20,7 @@ Date: 5 November 2026. Environment: Linux cloud container, Node 22, Chromium (Pl
 | 300 exam models (250 language: levels 24 q, mixed 22 q incl. reading + listening; 50 CCSE: 25 q, 10/3/3/3/6): valid answers, unique options, explanations, **no two models with the same question set** | ✅ 300/300 |
 | Culture academy: 32 lessons across the 5 CCSE areas; 430 original practice questions, every lesson link valid | ✅ |
 | DELE A2: 2 complete simulations (25 reading + 25 listening, 2 writing, 4 oral each) | ✅ |
+| DELE A1: 2 complete simulations (25 reading + 25 listening, a form + a short text, 4 oral each), every question with an explanation | ✅ |
 | Adventures: every step has a correct path, branches valid | ✅ 11 adventures |
 
 ## Arabic meaning of every verb — checked
@@ -60,6 +61,7 @@ Date: 5 November 2026. Environment: Linux cloud container, Node 22, Chromium (Pl
 - **Spanish TTS voice quality**: depends on the voices installed on the Mac.
 - **Loading the live site from this sandbox**: blocked by the sandbox proxy, so it is verified through GitHub’s own deploy and verify jobs instead.
 - **Official CCSE manual — verified:** a GitHub Actions job downloaded *Manual de preparación de la prueba CCSE 2026* (Instituto Cervantes, 102 pages) and counted **315 official questions** (Tarea 1: 134, 2: 36, 3: 25, 4: 36, 5: 84). The official question texts are **not reproduced** in the app (copyright); the app links to the PDF and offers a tracker by question number.
-- **Exam format (CCSE 25 questions / 45 min / pass 15; DELE A2 timings)**: the manual's text does not state these and the Cervantes web pages returned only a script shell to the automated job, so these figures come from the published exam description as known, **not re-verified in this session**. Please confirm on examenes.cervantes.es.
+- **DELE durations — verified** from the DELE structure table (2020) published by Universidad Complutense: A1 = 45 / 20 / 25 / 10 + 10 min prep; A2 = 60 / 40 / 45 / 12 + 12 min prep. The A2 academy had 35 min listening and 15 + 15 oral; corrected. The number of tasks and items per test is from the exam format as known, **not verified** (the official Cervantes guides timed out from GitHub's runner).
+- **Exam format (CCSE 25 questions / 45 min / pass 15)**: the manual's text does not state these and the Cervantes web pages returned only a script shell to the automated job, so these figures come from the published exam description as known, **not re-verified in this session**. Please confirm on examenes.cervantes.es.
 - **Verb conjugations**: the independent npm conjugator I wanted to use as a third source could not be installed in this environment (third-party code blocked). Validation therefore relies on the Jehle dataset, the app's own rule engine (153 hand-checked tests), consistency rules valid for every verb, and manual review of every disagreement.
 - **Verb levels (A1–B2) and “useful for DELE A2” tags** are the app's teaching estimate, not an official list.
