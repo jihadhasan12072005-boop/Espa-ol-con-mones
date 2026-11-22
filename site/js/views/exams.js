@@ -133,7 +133,7 @@
     { id: 'B2', t: 'نماذج B2', d: 'الشرط بأنواعه، توافق الأزمنة، الاستدراك، المبني للمجهول.', photo: 'toledo' },
     { id: 'mixed', t: 'نماذج مختلطة A1–B2', d: 'أسئلة متدرّجة من A1 إلى B2 في امتحان واحد.', photo: 'salamanca' },
   ];
-  X.isLang = function (e) { return e.kind === 'level' || e.kind === 'mixed' || e.kind === 'dele' || e.kind === 'dele-self' || e.kind === 'vocab' || e.kind === 'verbs'; };
+  X.isLang = function (e) { return e.kind === 'level' || e.kind === 'mixed' || e.kind === 'dele' || e.kind === 'dele-self' || e.kind === 'dele1' || e.kind === 'dele1-self' || e.kind === 'vocab' || e.kind === 'verbs'; };
 
   function history(kind, ref) {
     var m = {};
@@ -149,14 +149,15 @@
     var langs = U.filter(ECM.store.state.exams, X.isLang), last = langs.slice(0, 12);
     var avg = langs.length ? Math.round(U.sum(langs, function (e) { return e.pct || 0; }) / langs.length) : 0;
     var h = ui.hero('palacioreal', 'EXÁMENES DE LENGUA ESPAÑOLA', 'امتحانات اللغة الإسبانية',
-      '250 نموذجًا لغويًا (A1، A2، B1، B2، مختلط — 50 لكل فئة) بأسئلة قواعد ومفردات وتصريف وقراءة واستماع، مع مهمة كتابة ومحادثة بعد كل نموذج، إضافة إلى أكاديمية DELE A2 بالمحاكاة الكاملة. امتحانات الجنسية في قسم منفصل.');
+      '250 نموذجًا لغويًا (A1، A2، B1، B2، مختلط — 50 لكل فئة) بأسئلة قواعد ومفردات وتصريف وقراءة واستماع، مع مهمة كتابة ومحادثة بعد كل نموذج، إضافة إلى أكاديميتي DELE A1 و DELE A2 بالمحاكاة الكاملة. امتحانات الجنسية في قسم منفصل.');
     h += '<div class="row mt24"><div class="c4"><div class="card stat"><div class="v">' + langs.length + '</div><div class="l">امتحان لغوي منجز</div></div></div><div class="c4"><div class="card stat"><div class="v">' + avg + '%</div><div class="l">متوسط نتائج اللغة</div></div></div>' +
-      '<div class="c4"><div class="card stat"><div class="v">' + U.filter(langs, function (e) { return e.kind === 'dele' || e.kind === 'dele-self'; }).length + '</div><div class="l">قسم DELE منجز</div></div></div><div class="c4"><a href="#/ciudadania" style="text-decoration:none"><div class="card stat gold"><div class="v">★</div><div class="l">امتحانات الجنسية CCSE ← قسم منفصل</div></div></a></div></div>';
+      '<div class="c4"><div class="card stat"><div class="v">' + U.filter(langs, function (e) { return /^dele/.test(e.kind); }).length + '</div><div class="l">قسم DELE منجز</div></div></div><div class="c4"><a href="#/ciudadania" style="text-decoration:none"><div class="card stat gold"><div class="v">★</div><div class="l">امتحانات الجنسية CCSE ← قسم منفصل</div></div></a></div></div>';
     h += '<div class="row">' + U.map(X.cats, function (c) {
       var hist = history(c.id), done = U.keys(hist).length;
       return '<div class="c3"><a class="tile" href="#/exams/' + (c.id === 'mixed' ? c.id : 'level/' + c.id) + '"><div class="ph" style="' + ui.photoStyle(c.photo, true) + '"><span class="tag light">50 نموذجًا</span></div><div class="body"><h3>' + c.t + '</h3><p>' + c.d + '</p>' +
         '<div class="mt8">' + ui.bar(done * 2) + '</div><div class="meta">' + done + ' / 50 نموذجًا أُنجز</div></div></a></div>';
-    }).join('') + '<div class="c3"><a class="tile" href="#/dele"><div class="ph" style="' + ui.photoStyle('salamanca', true) + '"><span class="tag light">المهارات الأربع</span></div><div class="body"><h3>أكاديمية DELE A2</h3><p>هيكل امتحان معهد ثربانتس: قراءة، استماع، كتابة، محادثة — ومحاكاتان كاملتان.</p><div class="meta">ادخل ←</div></div></a></div></div>';
+    }).join('') + '<div class="c3"><a class="tile" href="#/dele1"><div class="ph" style="' + ui.photoStyle('plazamayor', true) + '"><span class="tag light">المهارات الأربع</span></div><div class="body"><h3>أكاديمية DELE A1</h3><p>الخطوة الأولى: امتحان المستوى A1 بشكله الرسمي — قراءة، استماع، كتابة، محادثة — ومحاكاتان كاملتان.</p><div class="meta">ابدأ ←</div></div></a></div>' +
+      '<div class="c3"><a class="tile" href="#/dele"><div class="ph" style="' + ui.photoStyle('salamanca', true) + '"><span class="tag light">المهارات الأربع</span></div><div class="body"><h3>أكاديمية DELE A2</h3><p>هيكل امتحان معهد ثربانتس: قراءة، استماع، كتابة، محادثة — ومحاكاتان كاملتان.</p><div class="meta">ادخل ←</div></div></a></div></div>';
     var pools = U.map(LV, function (lv) { return lv + ': ' + X.grammarPool(lv).length + ' + ' + (X.skillPool(lv, 'reading').length + X.skillPool(lv, 'listening').length); }).join(' · ');
     h += '<div class="row"><div class="c2"><div class="card"><h3>كيف بُنيت النماذج؟</h3><ul>' +
       '<li>كل نموذج مستوى = <b>24 سؤالًا</b>: 10 قواعد واستخدام (مكتوبة يدويًا)، 5 تصريف (محرّك مختبَر)، 5 مفردات، 2 فهم مقروء، 2 فهم مسموع. وبعد التسليم <b>مهمة كتابة</b> و<b>مهمة محادثة</b> مع مراجعة آلية مساعدة.</li>' +

@@ -218,6 +218,31 @@ E.DELE.sims.forEach(function (S) {
   if (S.escrita.length !== 2) fail('DELE ' + S.id + ' escrita tasks'); if (S.oral.length !== 4) fail('DELE ' + S.id + ' oral tasks');
 });
 notes.push('DELE simulations: ' + E.DELE.sims.length + ' complete (25 reading + 25 listening + 2 writing + 4 oral each)');
+// DELE A1: same structure checks, matching tasks keep their lettered options, every task has a model answer
+(function () {
+  var A = E.DELE_A1; if (!A) { fail('DELE A1 data missing'); return; }
+  var ids = {};
+  A.sims.forEach(function (S) {
+    if (ids[S.id] || E.DELE.sims.some(function (x) { return x.id === S.id; })) fail('DELE A1 duplicate sim id ' + S.id); ids[S.id] = 1;
+    ['lectura', 'auditiva'].forEach(function (p) {
+      var c = 0, part = A.parts.filter(function (x) { return x.id === p; })[0];
+      S[p].forEach(function (T) {
+        (T.multi ? T.blocks.map(function (b) { return b.q; }) : T.q).forEach(function (q, i) {
+          c++; checkQ({ type: 'mc', stem: q[0], opts: q[1], answer: q[2], why: q[3] }, 'DELE A1 ' + S.id + ' ' + p + ' T' + T.tarea + ' q' + i);
+          if (T.fixed && !/^[A-H]\. /.test(q[1][q[2]])) fail('DELE A1 ' + S.id + ' matching option must be lettered');
+        });
+        if (T.multi) T.blocks.forEach(function (b) { if (!(b.text || b.lines)) fail('DELE A1 ' + S.id + ' block without text/audio'); });
+        else if (!(T.text || T.lines)) fail('DELE A1 ' + S.id + ' ' + p + ' T' + T.tarea + ' without text/audio');
+      });
+      if (c !== part.items) fail('DELE A1 ' + S.id + ' ' + p + ': ' + c + ' items (expected ' + part.items + ')');
+    });
+    if (S.escrita.length !== 2) fail('DELE A1 ' + S.id + ' writing tasks');
+    S.escrita.forEach(function (T) { if (!T.model || !T.check || !T.task) fail('DELE A1 ' + S.id + ' writing task incomplete'); });
+    if (S.oral.length < 3) fail('DELE A1 ' + S.id + ' oral tasks');
+    S.oral.forEach(function (T) { if (!T.model || !T.prompts) fail('DELE A1 ' + S.id + ' oral task incomplete'); });
+  });
+  notes.push('DELE A1 simulations: ' + A.sims.length + ' complete (25 reading + 25 listening + 2 writing + ' + A.sims[0].oral.length + ' oral each)');
+})();
 // adventures
 E.ADV.forEach(function (a) { a.steps.forEach(function (s, i) { if (s.c && !s.c.some(function (c) { return c[2] === 1; })) fail('adventure ' + a.id + ' step ' + i + ' has no correct choice'); }); });
 notes.push('adventures: ' + E.ADV.length + ', speaking conversations: ' + E.SPEAK.convos.length + ', pronunciation drills: ' + E.SPEAK.sounds.length);
